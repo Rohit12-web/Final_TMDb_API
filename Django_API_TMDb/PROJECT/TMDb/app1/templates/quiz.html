@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <title>Movie Quiz - TMDB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #3282e3;
+            --primary-dark: #cf60ee;
+            --secondary: #8e24aa;
+            --background: #121212;
+            --surface: #1e1e1e;
+            --surface-light: #2c2c2c;
+            --surface-hover: #383838;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success: #4caf50;
+            --error: #f44336;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #121212, #1f1f1f);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: var(--primary);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+        
+        .container::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 200px;
+            height: 200px;
+            background: var(--secondary);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+        
+        .question-number {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .question {
+            font-size: 24px;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            font-weight: 500;
+            position: relative;
+            padding-left: 15px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .option {
+            background-color: var(--surface-light);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .option:hover {
+            background-color: var(--surface-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .option.selected {
+            background-color: rgba(255, 152, 0, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .option.correct {
+            background-color: rgba(76, 175, 80, 0.2);
+            border-color: var(--success);
+        }
+        
+        .option.incorrect {
+            background-color: rgba(244, 67, 54, 0.2);
+            border-color: var(--error);
+        }
+        
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .option-icon {
+            margin-right: 12px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .option.correct .option-icon {
+            background: var(--success);
+            color: #fff;
+        }
+        
+        .option.incorrect .option-icon {
+            background: var(--error);
+            color: #fff;
+        }
+        
+        .timer-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .timer-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .timer-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 152, 0, 0.1);
+        }
+        
+        .timer {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .timer-svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .timer-circle {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+        
+        .progress-container {
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .progress-bar {
+            background-color: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            height: 100%;
+            width: 0;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shine 2s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: block;
+            margin: 30px auto 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transition: all 0.6s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-container {
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-icon {
+            font-size: 64px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .score-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .score {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .feedback {
+            font-size: 20px;
+            margin: 20px 0;
+            color: var(--text);
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: confetti 5s ease-in-out infinite;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+        }
+        
+        .share-container {
+            margin: 20px 0;
+        }
+        
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            margin: 0 8px;
+            transition: var(--transition);
+        }
+        
+        .share-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+        .navbar-left {
+    display: flex;
+    align-items: center;
+    }
+    
+    .navbar-left img {
+    height: 50px;
+    width: 195px;
+    margin-right: 30px;
+    cursor: pointer;
+    }
+    
+    .navbar-left a {
+    color: white;
+    text-decoration: none;
+    margin-right: 30px;
+    font-size: 16px;
+    }
+    </style>
+</head>
+<!-- <header>
+    <div class="navbar-left"><a href="{% url 'home' %}"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_1-8ba2ac31f354005783fab473602c34c3f4fd207150182061e425d366e4f34596.svg" alt="TMDB Logo" width="110%"></a></div>
+    <nav class="nav-links">
+     <a href="{% url 'recomend' %}">Movie Finder</a>
+      <a href="{% url 'quiz_home' %}">Quiz</a>
+      <a href="{% url 'watchlist' %}">Watchlist</a>
+      {% if user.is_authenticated %}
+        {% if user.username == 'sim' %}
+        
+          <a href="{% url 'admin_movie_list' %}">Manage Movies</a>
+          <a href="{% url 'add_movie' %}">Add Movies</a>
+          <a href="#">Admin</a>
+        {% endif %}
+        <a href="{% url 'logout' %}">Logout ({{ user.username }})</a>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+      {% endif %}
+    </nav>
+  </header> -->
+<body>
+   
+    <div class="container">
+        <h1>Movie Quiz Challenge</h1>
+        
+        <div class="progress-container">
+            <div class="progress-info">
+                <span id="question-progress">Question 1 of 5</span>
+                <span id="score-display">Score: 0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+        
+        <div class="question-container" id="question-container">
+            <div class="info-bar">
+                <div class="question-number" id="question-number">Question 1</div>
+                <div class="timer-container">
+                    <div class="timer-wrapper">
+                        <div class="timer-bg"></div>
+                        <svg class="timer-svg" viewBox="0 0 100 100">
+                            <circle class="timer-circle" cx="50" cy="50" r="45" id="timer-circle"></circle>
+                        </svg>
+                        <div class="timer" id="timer">30</div>
+                    </div>
+                </div>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+        </div>
+        
+        <div class="result-container" id="result-container">
+            <div class="result-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2>Quiz Completed!</h2>
+            <div class="score-container">
+                <div class="score" id="score"></div>
+                <div class="feedback" id="feedback"></div>
+            </div>
+            <div class="share-container">
+                <a href="#" class="share-btn"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="share-btn"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="share-btn"><i class="fab fa-instagram"></i></a>
+            </div>
+            <button class="btn" id="restart-btn">
+                <i class="fas fa-redo-alt"></i> Play Again
+            </button>
+            <a href="{% url 'home3' %}" style="text-decoration: none;"><button class="btn" id="restart-btn">
+                <i class="fas fa-home"></i> Home
+            </button></a>
+        </div>
+        
+        <button class="btn" id="next-btn">
+            Next Question <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+    
+    <script>
+   // Add this function to select specific questions and random questions
+function getQuestionsWithRequired(array, requiredIds, totalCount) {
+    // First, find all the required questions by ID
+    const requiredQuestions = array.filter(question => requiredIds.includes(question.id));
+    
+    // Then get the remaining questions that are not in the required list
+    const remainingQuestions = array.filter(question => !requiredIds.includes(question.id));
+    
+    // Shuffle the remaining questions and select enough to reach totalCount
+    const numRandomQuestions = totalCount - requiredQuestions.length;
+    const shuffledRemaining = [...remainingQuestions].sort(() => 0.5 - Math.random());
+    const randomQuestions = shuffledRemaining.slice(0, numRandomQuestions);
+    
+    // Combine required and random questions
+    const combinedQuestions = [...requiredQuestions, ...randomQuestions];
+    
+    // Shuffle the combined list so required questions aren't always first
+    return combinedQuestions.sort(() => 0.5 - Math.random());
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const questionContainer = document.getElementById('question-container');
+    const resultContainer = document.getElementById('result-container');
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const progressElement = document.getElementById('progress');
+    const timerElement = document.getElementById('timer');
+    const timerCircle = document.getElementById('timer-circle');
+    const nextButton = document.getElementById('next-btn');
+    const restartButton = document.getElementById('restart-btn');
+    const scoreElement = document.getElementById('score');
+    const feedbackElement = document.getElementById('feedback');
+    const questionProgressElement = document.getElementById('question-progress');
+    const questionNumberElement = document.getElementById('question-number');
+    const scoreDisplayElement = document.getElementById('score-display');
+    
+    // Timer circle variables
+    const circleCircumference = 2 * Math.PI * 45;
+    timerCircle.style.strokeDasharray = `${circleCircumference}`;
+    
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 30;
+    let selectedOption = null;
+    let quizData = [];
+    let currentQuizData = []; // To store the current questions
+    let totalQuestions = 10; // We'll always show 10 questions at a time
+    
+    // Fetch questions from Django backend
+    function fetchQuestions() {
+        fetch('/api/quiz/questions/')
+            .then(response => response.json())
+            .then(data => {
+                quizData = data;
+                startQuiz();
+            })
+            .catch(error => {
+                console.error('Error fetching quiz data:', error);
+                // Fallback to sample data for testing
+                useSampleData();
+            });
+    }
+    
+    // Sample data for testing the frontend
+    function useSampleData() {
+        quizData = [
+            {
+                id: 1,
+                question: "What's the real name of Virus from 3 Idiots?",
+                options: ["Virjinder", "Chatur Ramalingam", "Viru Sahastrabuddhe", "Virendra Shah"],
+                correct_answer: "Viru Sahastrabuddhe"
+            },
+            {
+                id: 2,
+                question: "Who directed the movie 'Inception'?",
+                options: ["Steven Spielberg", "Christopher Nolan", "Quentin Tarantino", "Martin Scorsese"],
+                correct_answer: "Christopher Nolan"
+            },
+            {
+                id: 4,
+                question: "Which of the following is NOT a Cricket-Based Movie?",
+                options: ["83", "Dangal", "Chain Kulii Ki Main Kulii", "Lagaan"],
+                correct_answer: "Dangal"
+            },
+            {
+                id: 3,
+                question: "Which actor played Iron Man in the Marvel Cinematic Universe?",
+                options: ["Robert Downey Jr.", "Chris Hemsworth", "Mark Ruffalo", "Chris Evans"],
+                correct_answer: "Robert Downey Jr."
+            },
+            
+            {
+                id: 5,
+                question: "The movie 'Chhaava' is based on the life of?",
+                options: ["Chhatrapati Shivaji Maharaj", "Chhatrapati Rajaram", "Chhatrapati Sambhaji Maharaj", "Tantia Tope"],
+                correct_answer: "Chhatrapati Sambhaji Maharaj"
+            },
+            // Adding 15 more questions here
+            {
+                id: 6,
+                question: "Which Bollywood actor is known as 'King Khan'?",
+                options: ["Salman Khan", "Shah Rukh Khan", "Aamir Khan", "Saif Ali Khan"],
+                correct_answer: "Shah Rukh Khan"
+            },
+            {
+                id: 7,
+                question: "In 'Munna Bhai MBBS', what therapy did Munna Bhai introduce to cure people?",
+                options: ["Laughter Therapy", "Jadoo Ki Jhappi", "Dance Therapy", "Shock Therapy"],
+                correct_answer: "Jadoo Ki Jhappi"
+    
+            },
+            {
+                id: 8,
+                question: "'Radha' is a peppy track from which of these movies?",
+                options: ["Humpty Sharma Ki Dulhania", "Student of the Year", "Ae Dil Hai Mushkil", "Dilwale Dulhania Le Jayenge"],
+                correct_answer: "Student of the Year"
+            },
+            {
+                id: 9,
+                question: "In the movie Brahmāstra, How many times Alia Bhat said the word 'Shiva'?",
+                options: ["100", "69", "103", "129"],
+                correct_answer: "103"
+            },
+            {
+                id: 10,
+                question: "Which Bollywood film is based on the life of athlete Milkha Singh?",
+                options: ["Azhar", "Dangal", "Bhaag Milkha Bhaag", "M.S. Dhoni: The Untold Story"],
+                correct_answer: "Bhaag Milkha Bhaag"
+            },
+            {
+                id: 11,
+                question: "'Bade bade deshon mein aisi chhoti chhoti baatein hoti rehti hain.' is said by?",
+                options: ["Sameer (Hum Dil De Chuke Sanam)", "Aman (Kal Ho Naa Ho)", "Prem (HAHK)", "Raj (DDLJ)"],
+                correct_answer: "Raj (DDLJ)"
+            },
+            {
+                id: 12,
+                question: "Which actor played the role of Harshad Mehta in Scam 1992?",
+                options: ["Saif Ali Khan", "Abhishesk Bhachan", "Prateek Gandhi", "Varun Dhawan"],
+                correct_answer: "Prateek Gandhi"
+            },
+            {
+                id: 13,
+                question: "'Don't underestimate the power of a common man' is a dialogue from which movie?",
+                options: ["Jawan", "Dunki", "Chennai Express", "Tiger Zinda Hai"],
+                correct_answer: "Chennai Express"
+            },
+            {
+                id: 14,
+                question: "For which song 'RRR' won the Oscar for?",
+                options: ["Roar of RR", "Dosti", "Naatu Naatu", "Sholay"],
+                correct_answer: "Naatu Naatu"
+            },
+            {
+                id: 15,
+                question: "A mute girl from Pakistan gets lost in India. A man risks everything to reunite her with her family",
+                options: ["Ek Tha Tiger", "Bajrangi Bhaijaan", "Highway", "Veer-Zaara"],
+                correct_answer: "Bajrangi Bhaijaan"
+            },
+            {
+                id: 16,
+                question: "Guess the movie -> 22 tak padhai, 25 pe naukri, 26 pe chokri, 30 pe bachche, 60 pe retirement, aur phir…...",
+                options: ["Rockstar", "Ye Jawaani Hai Deewani", "Wake up Sid", "Tamasha"],
+                correct_answer: "Ye Jawaani Hai Deewani"
+            },
+            {
+                id: 17,
+                question: "'Mogambo khush hua..' is a famous dialogue from?",
+                options: ["Sholay", "Mr. India", "Don", "Karma"],
+                correct_answer: "Mr. India"
+            },
+            {
+                id: 18,
+                question: "In which movie 'Tom Holland' made his Spiderman Debut?",
+                options: ["No way Home", "Captain America: Civil War", "Homecoming", "Far From Home"],
+                correct_answer: "Captain America: Civil War"
+            },
+            {
+                id: 19,
+                question: "Which actress starred alongside Shah Rukh Khan in 'Dilwale Dulhania Le Jayenge'?",
+                options: ["Madhuri Dixit", "Kajol", "Rani Mukerji", "Juhi Chawla"],
+                correct_answer: "Kajol"
+            },
+            {
+                id: 20,
+                question: "Which movie features the famous dialogue 'Rishte me to hum tumhare Baap lagte h'?",
+                options: ["Sholay", "Don", "Shahenshah", "Mard"],
+                correct_answer: "Shahenshah"
+            }
+        ];
+        
+        startQuiz();
+    }
+    
+    function startQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        
+        // Always include questions with IDs 8, 9, 16, and 20
+        const requiredQuestionIds = [8, 9, 16, 20];
+        
+        // Select 10 questions total: the 4 required ones plus 6 random ones
+        currentQuizData = getQuestionsWithRequired(quizData, requiredQuestionIds, 10);
+        totalQuestions = currentQuizData.length;
+        
+        nextButton.style.display = 'block';
+        questionContainer.style.display = 'block';
+        resultContainer.style.display = 'none';
+        updateScoreDisplay();
+        loadQuestion();
+    }
+    
+    function updateScoreDisplay() {
+        scoreDisplayElement.textContent = `Score: ${score}`;
+    }
+    
+    function loadQuestion() {
+        resetState();
+        const currentQuestion = currentQuizData[currentQuestionIndex];
+        
+        // Update progress bar
+        const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+        progressElement.style.width = `${progressPercentage}%`;
+        
+        // Update question number
+        questionNumberElement.textContent = `Question ${currentQuestionIndex + 1}`;
+        questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
+        
+        questionElement.textContent = currentQuestion.question;
+        
+        // Create option buttons
+        currentQuestion.options.forEach((option, index) => {
+            const button = document.createElement('div');
+            button.classList.add('option');
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.classList.add('option-icon');
+            iconDiv.innerHTML = String.fromCharCode(65 + index); // A, B, C, D...
+            
+            const textDiv = document.createElement('div');
+            textDiv.textContent = option;
+            
+            button.appendChild(iconDiv);
+            button.appendChild(textDiv);
+            
+            button.addEventListener('click', () => selectOption(button, option, currentQuestion.correct_answer));
+            optionsElement.appendChild(button);
+        });
+        
+        // Update button text if on the last question
+        if (currentQuestionIndex === totalQuestions - 1) {
+            nextButton.innerHTML = 'View Score <i class="fas fa-trophy"></i>';
+        } else {
+            nextButton.innerHTML = 'Next Question <i class="fas fa-arrow-right"></i>';
+        }
+        
+        startTimer();
+    }
+    
+    function resetState() {
+        clearInterval(timer);
+        timeLeft = 30;
+        timerElement.textContent = timeLeft;
+        timerElement.style.color = 'var(--primary)';
+        timerCircle.style.strokeDashoffset = '0';
+        timerCircle.style.stroke = 'var(--primary)';
+        selectedOption = null;
+        nextButton.disabled = true;
+        
+        while (optionsElement.firstChild) {
+            optionsElement.removeChild(optionsElement.firstChild);
+        }
+    }
+    
+    function startTimer() {
+        timeLeft = 30;
+        timerElement.textContent = timeLeft;
+        
+        timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            // Update the timer circle
+            const offset = ((30 - timeLeft) / 30) * circleCircumference;
+            timerCircle.style.strokeDashoffset = offset;
+            
+            // Change color as time runs out
+            if (timeLeft <= 10) {
+                timerElement.style.color = 'var(--error)';
+                timerCircle.style.stroke = 'var(--error)';
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                handleTimeout();
+            }
+        }, 1000);
+    }
+    
+    function handleTimeout() {
+        const currentQuestion = currentQuizData[currentQuestionIndex];
+        const options = document.querySelectorAll('.option');
+        
+        options.forEach(option => {
+            const optionText = option.querySelector('div:last-child').textContent;
+            if (optionText === currentQuestion.correct_answer) {
+                option.classList.add('correct');
+                // Update icon
+                const iconDiv = option.querySelector('.option-icon');
+                iconDiv.innerHTML = '<i class="fas fa-check"></i>';
+            }
+            option.classList.add('disabled');
+        });
+        
+        nextButton.disabled = false;
+    }
+    
+    function selectOption(button, selectedAnswer, correctAnswer) {
+        if (selectedOption !== null) return; // Prevent selecting multiple options
+        
+        selectedOption = selectedAnswer;
+        button.classList.add('selected');
+        
+        clearInterval(timer);
+        
+        const options = document.querySelectorAll('.option');
+        options.forEach(option => {
+            const optionText = option.querySelector('div:last-child').textContent;
+            option.classList.add('disabled'); // Prevent clicking on other options
+            
+            if (optionText === correctAnswer) {
+                option.classList.add('correct');
+                // Update icon
+                const iconDiv = option.querySelector('.option-icon');
+                iconDiv.innerHTML = '<i class="fas fa-check"></i>';
+            } else if (option === button && optionText !== correctAnswer) {
+                option.classList.add('incorrect');
+                // Update icon
+                const iconDiv = option.querySelector('.option-icon');
+                iconDiv.innerHTML = '<i class="fas fa-times"></i>';
+            }
+        });
+        
+        if (selectedAnswer === correctAnswer) {
+            score++;
+            updateScoreDisplay();
+        }
+        
+        // Send answer to backend
+        submitAnswer(currentQuizData[currentQuestionIndex].id, selectedAnswer);
+        
+        nextButton.disabled = false;
+    }
+    
+    function submitAnswer(questionId, selectedAnswer) {
+        fetch('/api/quiz/submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                question_id: questionId,
+                selected_answer: selectedAnswer
+            })
+        }).catch(error => {
+            console.error('Error submitting answer:', error);
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showResult() {
+        questionContainer.style.display = 'none';
+        nextButton.style.display = 'none';
+        resultContainer.style.display = 'block';
+        
+        scoreElement.textContent = `${score}/${totalQuestions}`;
+        
+        const percentage = (score / totalQuestions) * 100;
+        let feedback;
+        let icon;
+        
+        if (percentage >= 80) {
+            feedback = "Amazing! You're a movie expert!";
+            icon = "trophy";
+            createConfetti();
+        } else if (percentage >= 60) {
+            feedback = "Great job! You know your movies well!";
+            icon = "star";
+        } else if (percentage >= 40) {
+            feedback = "Not bad! But there's room for improvement.";
+            icon = "thumbs-up";
+        } else {
+            feedback = "Keep watching more movies and try again!";
+            icon = "film";
+        }
+        
+        feedbackElement.textContent = feedback;
+        document.querySelector('.result-icon i').className = `fas fa-${icon}`;
+        
+        // Send final score to backend
+        submitFinalScore(score);
+    }
+    
+    function createConfetti() {
+        const container = document.querySelector('.score-container');
+        for (let i = 0; i < 30; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.top = `${Math.random() * 100}%`;
+            confetti.style.backgroundColor = getRandomColor();
+            confetti.style.animationDelay = `${Math.random() * 5}s`;
+            container.appendChild(confetti);
+        }
+    }
+    
+    function getRandomColor() {
+        const colors = ['#ff9800', '#8e24aa', '#4caf50', '#2196f3', '#f44336'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    function submitFinalScore(finalScore) {
+        fetch('/api/quiz/score/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                score: finalScore,
+                total: totalQuestions
+            })
+        }).catch(error => {
+            console.error('Error submitting final score:', error);
+        });
+    }
+    
+    nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < totalQuestions) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    });
+    
+    restartButton.addEventListener('click', () => {
+        startQuiz();
+    });
+    
+    // Initialize the quiz
+    fetchQuestions();
+});
+        
+    </script>
+</body>
+</html>

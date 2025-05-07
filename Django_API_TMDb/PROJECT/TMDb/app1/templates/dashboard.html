@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+<head>
+  <title>Dashboard - TMDB</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Navbar Styles */
+#navbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+background-color: #1f1f1f;
+padding: 20px 70px;
+position: fixed;
+top: 0;
+width: 100%;
+transition: top 0.3s;
+z-index: 1000;
+font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.navbar-left {
+display: flex;
+align-items: center;
+width: 100%;
+
+}
+
+.navbar-left img {
+height: 40px;
+width: 150px;
+margin-right: 30px;
+cursor: pointer;
+}
+
+.navbar-left a {
+color: white;
+text-decoration: none;
+margin-right: 30px;
+font-size: 16px;
+}
+
+.navbar-right {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+}
+
+.navbar-right a {
+color: white;
+text-decoration: none;
+margin-right: 25px;
+font-size: 16px;
+}
+
+.watch{
+    margin-left: 10px;
+}
+
+/* Search Box */
+.search-box {
+padding: 10px 15px;
+border-radius: 25px;
+border: 1px solid #ccc;
+width: 400px; /* Adjusted default width */
+height: 30px;
+outline: none;
+font-size: 16px;
+transition: all 0.3s ease;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+background-color: #f9f9f9;
+color: #333;
+margin-right: 20px;
+}
+
+.search-box::placeholder {
+color: #aaa;
+font-style: italic;
+}
+
+.search-box:focus {
+border-color: #007bff;
+box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+background-color: #fff;
+}
+
+/* Dropdown Styles */
+.dropdown {
+position: relative;
+display: inline-block;
+}
+
+/* Dropdown Styles */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    width: 120px; /* Adjust dropdown width */
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    top: 40px; /* Adjust top position for better alignment */
+    right: 0; /* Align the dropdown to the right side */
+}
+
+
+.dropdown-content a {
+color: rgb(0, 0, 0);
+padding: 12px 16px;
+text-decoration: none;
+display: block;
+font-size: 14px;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+display: block;
+}
+
+/* Hamburger Menu Styles */
+.hamburger {
+display: none;
+flex-direction: column;
+cursor: pointer;
+}
+
+.hamburger div {
+width: 25px;
+height: 3px;
+background-color: white;
+margin: 4px;
+transition: all 0.3s ease;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For screens smaller than 768px */
+@media (max-width: 768px) {
+    #navbar {
+        padding: 15px 20px;
+        justify-content: space-between; /* This ensures proper spacing */
+    }
+
+    .navbar-left, .navbar-right {
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the left */
+    }
+
+    .navbar-left a, 
+    .navbar-right a {
+        display: block;
+        margin-bottom: 15px; /* Space between links */
+    }
+
+    .navbar-left img {
+        height: 30px;
+        width: 120px;
+    }
+
+    .search-box {
+        width: 200px;
+        margin-bottom: 15px; /* Ensure search box spacing */
+    }
+
+    .hamburger {
+       
+display: flex; /* Show hamburger icon */
+}
+
+.navbar-right {
+display: none; /* Hide right-side content by default */
+}
+
+#navbar.active .navbar-left a, 
+#navbar.active .navbar-right {
+display: flex;
+flex-direction: column;
+background-color: #032541;
+position: absolute;
+top: 70px;
+left: 0;
+width: 100%;
+padding: 20px;
+}
+
+#navbar.active .navbar-left {
+flex-direction: column;
+align-items: flex-start;
+}
+
+#navbar.active .navbar-right a {
+margin-bottom: 15px;
+}
+}
+
+/* For screens smaller than 480px */
+@media (max-width: 480px) {
+.search-box {
+width: 150px;
+}
+
+.navbar-left img {
+height: 30px;
+width: 120px;
+}
+}
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      color: #212529;
+    }
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 100px;
+      padding: 0 20px;
+    }
+    .profile-card {
+      width: 100%;
+      max-width: 500px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin: 0 auto;
+    }
+    .profile-card header {
+      background: #032541;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+    }
+    .profile-card header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .profile-card .details {
+      padding: 25px 30px;
+      background-color: #ffffff;
+    }
+    .profile-card .details .info {
+      margin-bottom: 15px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile-card .details .info:last-of-type {
+      border-bottom: none;
+    }
+    .profile-card .details .info .label {
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.95rem;
+    }
+    .profile-card .details .info .value {
+      color: #212529;
+      font-size: 0.95rem;
+    }
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+    }
+    .action-btn {
+      padding: 10px 24px;
+      text-align: center;
+      color: white;
+      background: #032541;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .action-btn:hover {
+      background: #01365d;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    }
+    .action-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .action-btn.secondary {
+      background: #6c757d;
+      margin-right: 10px;
+    }
+    .action-btn.secondary:hover {
+      background: #5a6268;
+    }
+    @media (max-width: 576px) {
+      .profile-card {
+        max-width: 100%;
+      }
+      .profile-card .details .info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .profile-card .details .info .label {
+        margin-bottom: 5px;
+      }
+      .btn-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .action-btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .action-btn.secondary {
+        margin-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+    <div id="navbar">
+        <div class="navbar-left">
+            <a href="{%url 'home' %}"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_1-8ba2ac31f354005783fab473602c34c3f4fd207150182061e425d366e4f34596.svg" alt="TMDB Logo"></a>
+            <div class="dropdown">
+                <a href="#">Movies</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular</a>
+                    <a href="#">Upcoming</a>
+                    <a href="#">Top Rated</a>
+                    <a href="#">Now Playing</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">TV Shows</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular</a>
+                    <a href="#">Airing Today</a>
+                    <a href="#">Top Rated</a>
+                    <a href="#">On TV</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">People</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular People</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">More</a>
+                <div class="dropdown-content">
+                    <a href="#">Discussions</a>
+                    <a href="#">Leaderboard</a>
+                    <a href="#">Support</a>
+                    <a href="#">API</a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Hamburger Icon -->
+        <div class="hamburger" onclick="toggleNavbar()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        
+        <div class="navbar-right">
+            <input type="text" class="search-box" placeholder="Search for a movie, tv show, person...">
+            <!-- <a href="#">Login</a> -->
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="profile-card">
+            <header>
+                <h1>Account Dashboard</h1>
+            </header>
+            <div class="details">
+                <div class="info">
+                    <span class="label">Username</span>
+                    <span class="value">{{ user.username }}</span>
+                </div>
+                <div class="info">
+                    <span class="label">Email Address</span>
+                    <span class="value">{{ user.email }}</span>
+                </div>
+                <div class="info">
+                    <span class="label">Member Since</span>
+                    <span class="value">April 2025</span>
+                </div>
+                <div class="info">
+                    <span class="label">Account Status</span>
+                    <span class="value">
+                        {% if user.username == 'sim' %}
+                        <a href="#" style="text-decoration: none; color: black;">&nbsp; Admin &nbsp;</a>
+                    {% else %}
+                        <a href="#" style="text-decoration: none; color:black;">User</a>
+                    {% endif %}
+                            
+                        
+                    </span>
+                </div>
+                <div class="btn-container">
+                  <a href="{% url 'logout' %}" style="text-decoration: none;">
+                    <button class="action-btn">Logout</button>
+                </a>&nbsp;&nbsp;
+                    <a href="#" style="text-decoration: none;">
+                        <button class="action-btn secondary">Settings</button>
+                    </a>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleNavbar() {
+            document.getElementById("navbar").classList.toggle("active");
+        }
+    </script>
+</body>
+</html>

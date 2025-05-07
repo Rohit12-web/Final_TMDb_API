@@ -1,0 +1,1587 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+    
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMDB</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+    <div id="navbar">
+        <div class="navbar-left">
+            <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_1-8ba2ac31f354005783fab473602c34c3f4fd207150182061e425d366e4f34596.svg" alt="TMDB Logo">
+            <div class="dropdown">
+                <a href="{% url 'home3'%}">Movies</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular</a>
+                    <a href="#">Upcoming</a>
+                    <a href="#">Top Rated</a>
+                    <a href="#">Now Playing</a>
+                </div>
+            </div>
+            <!-- <div class="dropdown">
+                <a href="#">TVShows</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular</a>
+                    <a href="#">Airing Today</a>   
+                    <a href="#">Top Rated</a>
+                    <a href="#">On TV</a>
+                </div>
+            </div> -->
+            <div class="dropdown">
+                <a href="{% url 'people'%}">People</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular People</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="{% url 'about' %}">AboutUs</a> 
+
+            </div>
+            <div class="dropdown">
+                <a href="{% url 'contact_form' %}">ContactUs</a> 
+
+            </div>
+        </div>
+    
+        <!-- Hamburger Icon -->
+        <div class="hamburger" onclick="toggleNavbar()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <button id="darkModeToggle" style="padding-right: 13px; padding-bottom: 3px; padding-left: 150px;">🌙</button>
+        <div class="navbar-right">
+            <input type="text" id="searchInput" onkeyup="filterMovies()" class="search-box" placeholder="Search for a movie, tv show, person...">
+        
+            
+        </div>
+        {% if user.is_authenticated %}
+       
+        <a href="{% url 'dashboard' %}" style="text-decoration: none; color: white;">Dashboard</a>
+        {% if user.username == 'sim' %}
+            
+        
+        <a href="{% url 'add_movie' %}" style="text-decoration: none; color: white;">&nbsp;  Add <span class="whitepluse">+</span>&nbsp; </a>
+      {% endif %}
+            <a href="{% url 'logout' %}" style="text-decoration: none; color: white;">Logout ({{ user.username }})</a>
+            
+          {% else %}
+            <a href="{% url 'login' %}" style="text-decoration: none; color: white;">Login</a>
+            <a href="{% url 'register' %}" style="text-decoration: none; color: white;">Register</a>
+          {% endif %}
+        </div>
+    
+
+   
+    
+    <section class="hero">
+        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    
+                        <a href="{% url 'recomend' %}"><img src="{% static 'images/my_image.png' %}" class="d-block w-100" alt="Slide 1"></a>
+                    </a>
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'images/dr.png' %}" class="d-block w-100" alt="Slide 2" style="height: 425px;">
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'images/dr.png' %}" class="d-block w-100" alt="Slide 3" style="height: 425px;">
+                </div>
+            </div>            
+            <!-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button> -->
+        </div>
+    </section>
+    
+
+    <div class="trending">
+        <h1>Was Trending in &nbsp;<span class="bollywood" data-text="2024"></span></h1>
+        <!-- <button class="active">Today</button>
+        <button>This Week</button> -->
+    </div>
+
+    <div class="container">
+      <div class="cont">
+        <div class="movie-slider">
+            <a href="{% url 'card2' %}" style="text-decoration: none;"><div class="movie-card">
+
+                <img src="https://m.media-amazon.com/images/M/MV5BZTEyYzVjYjEtNWYzZi00NWRhLTgyZjUtNDlkZjBiNWIxYTEwXkEyXkFqcGc@.V1.jpg" alt="Stree 2">
+                <div class="rating">75</div>
+                <div class="title">Stree 2</div>
+                <div class="release-date">Aug 15, 2024</div>
+            </div></a>
+            
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BNTc0YmQxMjEtODI5MC00NjFiLTlkMWUtOGQ5NjFmYWUyZGJhXkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="Dune: Part Two">
+                <div class="rating">81</div>
+                <div class="title">Dune: Part Two</div>
+                <div class="release-date">Mar 1, 2024</div>
+            </div>
+  
+            <div class="movie-card">
+                <img src="https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/maharaja-hindi-et00402946-1719504211.jpg" alt="Maharaja">
+                <div class="rating">84</div>
+                <div class="title">Maharaja</div>
+                <div class="release-date">Jun 14, 2024</div>
+            </div>
+
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BNTcwYWE1NTYtOWNiYy00NzY3LWIwY2MtNjJmZDkxNDNmOWE1XkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="Furiosa: A Mad Max Saga">
+                <div class="rating">75</div>
+                <div class="title">Furiosa: A Mad Max Saga</div>
+                <div class="release-date">May 23, 2024</div>
+            </div>
+  
+            
+            <div class="movie-card">
+                <img src="https://static.toiimg.com/photo/98118331.cms" alt="Laapataa Ladies">
+                <div class="rating">85</div>
+                <div class="title">Laapataa Ladies</div>
+                <div class="release-date">Mar 1, 2024</div>
+            </div>
+            <div class="movie-card">
+              <img src="https://upload.wikimedia.org/wikipedia/en/7/70/The_Wild_Robot_poster.jpg" alt="The Wild Robot">
+              <div class="rating">85</div>
+              <div class="title">The Wild Robot</div>
+              <div class="release-date">Oct 18, 2024</div>
+          </div>
+            <div class="movie-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhepuML2Jyp2h9cm5BVY-LzITQhOOBSFgt_Q&s" alt="Pushpa 2: The Rule">
+            <div class="rating">72</div>
+            <div class="title">Pushpa 2: The Rule</div>
+            <div class="release-date">Dec 5, 2024</div>
+            </div>
+            
+            <a href="{% url 'card1' %}" style="text-decoration: none;">   <div class="movie-card">
+
+            <img src="https://m.media-amazon.com/images/M/MV5BZGJmMmE4YTMtMTJmOS00ZTRjLTg0NzctYzczZjY2MTVlNWI0XkEyXkFqcGc@._V1_.jpg" alt="Ghostlight">
+            <div class="rating">84</div>
+            <div class="title">Jatt & Juliet 3</div>
+            <div class="release-date">Jun 28, 2024</div>
+            </div></a>
+            <div class="movie-card">
+              <img src="https://m.media-amazon.com/images/M/MV5BMTBkODE2ZTQtZGQzZi00OWVlLTk0M2UtMjcxMjk5ZTA5N2IzXkEyXkFqcGc@.V1.jpg" alt="Chandu Champion">
+              <div class="rating">78</div>
+              <div class="title">Chandu Champion</div>
+              <div class="release-date">Jun 14, 2024</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="trailers-panel">
+        <h2>Latest Trailers & Teaser</h2>
+        <div class="trailers-grid">
+
+            <div class="trailer-card">
+                <a href="https://youtu.be/nZEXRZMEd5Y?si=mgTaNU-cKvM_9Gix" target="_blank"><img src="https://i.ytimg.com/vi/nZEXRZMEd5Y/maxresdefault.jpg" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/nZEXRZMEd5Y?si=mgTaNU-cKvM_9Gix" target="_blank"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+                <h3>Bhul Chuk Maaf</h3>
+              </div>
+              <div class="trailer-card">
+                <a href="https://youtu.be/pz-RhfO_uEE?si=tJrpFnamz4rCcb6J" target="_blank"><img src="https://i.ytimg.com/vi/f8-JBwwJGV4/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAD25pRaDCxKTcJ9QPJHAgQP4nVYA" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/pz-RhfO_uEE?si=tJrpFnamz4rCcb6J" target="_blank"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+                <h3>The Conjuring:Last Rites</h3>
+              </div>
+              <div class="trailer-card">
+                <a href="https://youtu.be/kQF1gl7nLaU?si=HbaRao2qQnvnXf5d" target="_blank"><img src="https://i.ytimg.com/vi/g__5NuRsRUE/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBHnPdJYh2rpVR_TZ2LgW-LMmsQhw" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/kQF1gl7nLaU?si=HbaRao2qQnvnXf5d" target="_blank"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+                <h3>RAID 2</h3>
+              </div>
+
+
+              <div class="trailer-card">
+                <a href="https://youtu.be/uhUht6vAsMY?si=ttyZnAeraHac0wX6" target="_blank"><img src="https://www.hollywoodreporter.com/wp-content/uploads/2024/12/Screenshot20241219at120935%E2%80%AFPMH-2024.jpg?w=1296&h=730&crop=1" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/uhUht6vAsMY?si=ttyZnAeraHac0wX6"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>Superman</h3>
+            </div>
+            
+            <div class="trailer-card">
+                <a href="https://youtu.be/r-7g08INMSI?si=Z6YqY1CHVUc1VRtC" target="_blank"><img src="https://i.ytimg.com/vi/r-7g08INMSI/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCeZ5r07f7yKMD8nh4LGPzSa6b-cg" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/r-7g08INMSI?si=Z6YqY1CHVUc1VRtC"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>Kesari Chapter 2</h3>
+            </div>
+            <div class="trailer-card">
+                <a href="https://youtu.be/jan5CFWs9ic?si=-H7auX3UlXWL7-fh" target="_blank"><img src="https://i.ytimg.com/vi/jan5CFWs9ic/maxresdefault.jpg" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/jan5CFWs9ic?si=-H7auX3UlXWL7-fh" target="_blank"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+                <h3>Jurrasic World Rebirth</h3>
+              </div>
+            <div class="trailer-card">
+                <a href="https://youtu.be/d4VVkwTw3x4?si=KrYrqXWNlOJD1tCs" target="_blank"><img src="https://i.ytimg.com/vi/eXBhKDIbEyc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCg7jiudrfZ0wNSQMB-HIkI7RWMIg" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/d4VVkwTw3x4?si=KrYrqXWNlOJD1tCs" target="_blank"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+                <h3>Chhorii 2</h3>
+              </div>
+
+            
+
+            <div class="trailer-card">
+                <a href="https://youtu.be/fsQgc9pCyDU?si=CvlaeD8HIathnViN" target="_blank"><img src="https://i.ytimg.com/vi/NOhDyUmT9z0/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDckriEowmaUDSnzoTMWolxuZo_cQ" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/fsQgc9pCyDU?si=CvlaeD8HIathnViN"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>Mission: Impossible – The Final Reckoning</h3>
+            </div>
+
+            
+
+            <div class="trailer-card">
+                <a href="https://youtu.be/AzMo-FgRp64?si=2PfCGOOR-WrqYJcr" target="_blank"><img src="https://i.ytimg.com/vi/AzMo-FgRp64/maxresdefault.jpg" alt="Trailer Thumbnail"></a>
+                <a href="https://youtu.be/AzMo-FgRp64?si=2PfCGOOR-WrqYJcr"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+                <h3>The Fantastic Four: First Steps</h3>
+            </div>
+
+          <div class="trailer-card">
+            <a href="https://youtu.be/UL66Jzlnk24?si=D1lqL4E1g_GL0U-e" target="_blank"><img src="https://i.ytimg.com/vi/v-94Snw-H4o/maxresdefault.jpg" alt="Trailer Thumbnail"></a>
+            <a href="https://youtu.be/UL66Jzlnk24?si=D1lqL4E1g_GL0U-e"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>Thunderbolts</h3>
+          </div>
+
+          <div class="trailer-card">
+            <a href="https://youtu.be/22w7z_lT6YM?si=Wn-c1yFb-aWKv40C" target="_blank"><img src="https://media.themoviedb.org/t/p/w355_and_h200_multi_faces/7HqLLVjdjhXS0Qoz1SgZofhkIpE.jpg" alt="Trailer Thumbnail"></a>
+            <a href="https://youtu.be/22w7z_lT6YM?si=Wn-c1yFb-aWKv40C"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>How to train your Dragon</h3>
+          </div>
+          <div class="trailer-card">
+            <a href="https://youtu.be/e2eX1HGeBFE?si=DDRBQOtQQw2uIoCt" target="_blank"><img src="https://i.ytimg.com/vi/9ePfLQMd1QA/sddefault.jpg?v=64a7f1e9" alt="Trailer Thumbnail"></a>
+            <a href="https://youtu.be/e2eX1HGeBFE?si=DDRBQOtQQw2uIoCt" target="_blank"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>Housefull 5</h3>
+          </div>
+          <div class="trailer-card">
+            <a href="https://youtu.be/1pHDWnXmK7Y?si=4CBf2bqcvXYinIlj" target="_blank"><img src="https://media.themoviedb.org/t/p/w355_and_h200_multi_faces/8eifdha9GQeZAkexgtD45546XKx.jpg" alt="Trailer Thumbnail"></a>
+            <a href="https://youtu.be/1pHDWnXmK7Y?si=4CBf2bqcvXYinIlj"><i class="fa-solid fa-play icon" style="color: white;"></i></a>
+            <h3>Captain America: Brave New World</h3>
+          </div>
+          
+        </div>
+    </div>
+
+    <div class="trending">
+        <h1>What's popular in &nbsp;<span class="bollywood" data-text="Bollywood"></span></h1>
+    </div>
+
+    <div class="container">
+      
+        <div class="movie-slider">
+            <div class="movie-card">
+                <img src="https://assets.gadgets360cdn.com/pricee/assets/product/202206/Jawan-poster_1655912386.jpg" alt="Jawan">
+                <div class="rating">84</div>
+                <div class="title">Jawan</div>
+                <div class="release-date">Sep 7, 2023</div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BNzc4ZWQ3NmYtODE0Ny00YTQ4LTlkZWItNTBkMGQ0MmUwMmJlXkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="3 Idiots">
+                <div class="rating">87</div>
+                <div class="title">3 Idiots</div>
+                <div class="release-date">Dec 25, 2009</div>
+            </div>
+  
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/16/de/6c/16de6c2bb476f433311efca831c35a2b.jpg" alt="Shershaah">
+                <div class="rating">82</div>
+                <div class="title">Shershaah</div>
+                <div class="release-date">Aug 12, 2021</div>
+            </div>
+  
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BM2UwZTNkMmItYmYzOS00MTk3LTg3NDgtNzg5ZjYxNTIzNzY4XkEyXkFqcGc@.V1.jpg" alt="M.S. Dhoni: The Untold Story">
+                <div class="rating">67</div>
+                <div class="title">M.S. Dhoni: The Untold Story</div>
+                <div class="release-date">Sep 30, 2016</div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BODA4MjM2ODk4OF5BMl5BanBnXkFtZTcwNDgzODk1OQ@@.V1.jpg" alt="Yeh Jawaani Hai Deewani">
+                <div class="rating">85</div>
+                <div class="title">Yeh Jawaani Hai Deewani</div>
+                <div class="release-date">May 31, 2013</div>
+            </div>
+            <div class="movie-card">
+              <img src="https://upload.wikimedia.org/wikipedia/en/4/42/Bhaag_Milkha_Bhaag_poster.jpg" alt="Bhaag Milkha Bhaag">
+              <div class="rating">85</div>
+              <div class="title">Bhaag Milkha Bhaag</div>
+              <div class="release-date">Jul 11, 2013</div>
+          </div>
+          <div class="movie-card">
+            <img src="https://images.justwatch.com/poster/315260027/s332/zindagi-na-milegi-dobara" alt="Zindagi Na Milegi Dobara">
+            <div class="rating">80</div>
+            <div class="title">Zindagi Na Milegi Dobara</div>
+            <div class="release-date">Jul 15, 2011</div>
+        </div>
+        <div class="movie-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/b/b7/Mission_Mangal.jpg" alt="Mission Mangal">
+                <div class="rating">81</div>
+                <div class="title">Mission Mangal</div>
+                <div class="release-date">Aug 15, 2019</div>
+            </div>
+            <div class="movie-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/8/8a/Drishyam_2015_film.jpg" alt="Drishyam">
+                <div class="rating">85</div>
+                <div class="title">Drishyam</div>
+                <div class="release-date">Jul 31, 2015</div>
+            </div>
+            <div class="movie-card">
+              <img src="https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p25126_p_v8_ac.jpg" alt="Dilwale Dulhania Le Jayenge">
+              <div class="rating">80</div>
+              <div class="title">Dilwale Dulhania Le Jayenge</div>
+              <div class="release-date">Oct 20, 1995</div>
+          </div>
+        </div>
+    </div>
+
+    <div class="trending">
+        <h1>What's popular in &nbsp;<span class="bollywood" data-text="Hollywood"></span></h1>
+    </div>
+
+    <div class="container">
+      
+        <div class="movie-slider">
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="The Godfather">
+                <div class="rating">92</div>
+                <div class="title">The Godfather</div>
+                <div class="release-date">Mar 24, 1972</div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BOTgyOGQ1NDItNGU3Ny00MjU3LTg2YWEtNmEyYjBiMjI1Y2M5XkEyXkFqcGc@.V1.jpg" alt="Fight Club">
+                <div class="rating">88</div>
+                <div class="title">Fight Club</div>
+                <div class="release-date">Oct 15, 1999</div>
+            </div>
+  
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@.V1_FMjpg_UX1000.jpg" alt="The Dark Knight">
+                <div class="rating">90</div>
+                <div class="title">The Dark Knight</div>
+                <div class="release-date">Jul 18, 2008</div>
+            </div>
+  
+
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BMzUzNDM2NzM2MV5BMl5BanBnXkFtZTgwNTM3NTg4OTE@.V1.jpg" alt="La La Land">
+                <div class="rating">84</div>
+                <div class="title">La La Land</div>
+                <div class="release-date">Dec 9, 2016</div>
+            </div>
+
+
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BNzY3OWQ5NDktNWQ2OC00ZjdlLThkMmItMDhhNDk3NTFiZGU4XkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="Joker">
+                <div class="rating">88</div>
+                <div class="title">Joker</div>
+                <div class="release-date">Oct 2, 2019</div>
+            </div>
+
+            <div class="movie-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3B9k_uo_Tzz7xgFYdf6CjuAxr1iPnE7E3yg&s" alt="Donnie Darko">
+                <div class="rating">91</div>
+                <div class="title">Donnie Darko</div>
+                <div class="release-date">Oct 26, 2001</div>
+            </div>
+            
+            
+            <div class="movie-card">
+              <img src="https://movie-reviews.com.au/sites/default/files/ReviewImages/martian_ver6.jpg" alt="The Martian">
+              <div class="rating">85</div>
+              <div class="title">The Martian</div>
+              <div class="release-date">Oct 2, 2015</div>
+            </div>
+            <div class="movie-card">
+            <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@.V1_FMjpg_UX1000.jpg" alt="Inception">
+            <div class="rating">88</div>
+            <div class="title">Inception</div>
+            <div class="release-date">Jul 16, 2010</div>
+            </div>
+            
+            
+            <div class="movie-card">
+              <img src="https://m.media-amazon.com/images/M/MV5BMmFiZGZjMmEtMTA0Ni00MzA2LTljMTYtZGI2MGJmZWYzZTQ2XkEyXkFqcGc@.V1.jpg" alt="Spider-Man: No Way Home">
+              <div class="rating">87</div>
+              <div class="title">Spider-Man: No Way Home</div>
+              <div class="release-date">Dec 17, 2021</div>
+          </div>
+
+          <div class="movie-card">
+            <img src="https://m.media-amazon.com/images/M/MV5BYzdjMDAxZGItMjI2My00ODA1LTlkNzItOWFjMDU5ZDJlYWY3XkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="Interstellar">
+            <div class="rating">92</div>
+            <div class="title">Interstellar</div>
+            <div class="release-date">Nov 7, 2014</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="trending">
+        <h1>What's popular in &nbsp;<span class="bollywood" data-text="Tollywood"></span></h1>
+    </div>
+
+    <div class="container">
+      
+        <div class="movie-slider">
+            <div class="movie-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/d/d7/RRR_Poster.jpg" alt="RRR">
+                <div class="rating">89</div>
+                <div class="title">RRR</div>
+                <div class="release-date">Mar 24, 2022</div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BM2M0YmIxNzItOWI4My00MmQzLWE0NGYtZTM3NjllNjIwZjc5XkEyXkFqcGc@.V1.jpg" alt="K.G.F: Chapter 1">
+                <div class="rating">91</div>
+                <div class="title">K.G.F: Chapter 1</div>
+                <div class="release-date">Dec 21, 2018</div>
+            </div>
+  
+            <div class="movie-card">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/84/Kantara_poster.jpeg/220px-Kantara_poster.jpeg" alt="Kantara">
+                <div class="rating">94</div>
+                <div class="title">Kantara</div>
+                <div class="release-date">Dec 30, 2022</div>
+            </div>
+
+            <div class="movie-card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTABoKLQ646Nb78ewPErsqKmkGr-jQI15hw7g&s" alt="Vikram Vedha">
+                <div class="rating">87</div>
+                <div class="title">Vikram Vedha</div>
+                <div class="release-date">Jul 21, 2017</div>
+            </div>
+  
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BM2YxZThhZmEtYzM0Yi00OWYxLWI4NGYtM2Y2ZDNmOGE0ZWQzXkEyXkFqcGc@.V1.jpg" alt="Baahubali: The Beginning">
+                <div class="rating">80</div>
+                <div class="title">Baahubali: The Beginning</div>
+                <div class="release-date">Jul 10, 2015</div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/M/MV5BOWE4YWEyNjYtMWFiNC00M2IzLWE3ZGMtMjQ0ZGEyOWI1YjAzXkEyXkFqcGc@.V1_FMjpg_UX1000.jpg" alt="Pushpa: The Rise">
+                <div class="rating">86</div>
+                <div class="title">Pushpa: The Rise</div>
+                <div class="release-date">Dec 10, 2021</div>
+            </div>
+            
+          <div class="movie-card">
+            <img src="https://upload.wikimedia.org/wikipedia/en/1/10/Jersey_2019_poster.jpg" alt="Jersey">
+            <div class="rating">80</div>
+            <div class="title">Jersey</div>
+            <div class="release-date">Apr 19, 2019</div>
+        </div>
+        <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/I/71i8a-PnChL.AC_UF1000,1000_QL80.jpg" alt="Baahubali 2: The Conclusion">
+                <div class="rating">82</div>
+                <div class="title">Baahubali 2: The Conclusion</div>
+                <div class="release-date">Apr 28, 2017</div>
+            </div>
+            <div class="movie-card">
+                <img src="https://m.media-amazon.com/images/S/pv-target-images/dbe30e1e25813a698e0da679a5968c380bd2d1b4e6966394d4c964c6b3301896.jpg" alt="K.G.F: Chapter 2">
+                <div class="rating">86</div>
+                <div class="title">K.G.F: Chapter 2</div>
+                <div class="release-date">Apr 14, 2022</div>
+            </div>
+            <div class="movie-card">
+              <img src="https://m.media-amazon.com/images/M/MV5BZjllNTdiM2QtYjQ0Ni00ZGM1LWFlYmUtNWY0YjMzYWIxOTYxXkEyXkFqcGc@.V1.jpg" alt="Pushpa 2: The Rule">
+              <div class="rating">81</div>
+              <div class="title">Pushpa 2: The Rule</div>
+              <div class="release-date">Dec 5, 2024</div>
+          </div>
+        </div>
+    </div>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Why Choose TMDB?</h2>
+            <div class="feature-grid">
+                <div class="feature-card fade-in-up" style="animation-delay: 0.2s">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" fill="none">
+                            <path d="M19.82 2H4.18C2.97 2 2 2.97 2 4.18v15.64C2 21.03 2.97 22 4.18 22h15.64c1.21 0 2.18-.97 2.18-2.18V4.18C22 2.97 21.03 2 19.82 2z"/>
+                            <path d="M7 2v20"/>
+                            <path d="M17 2v20"/>
+                            <path d="M2 12h20"/>
+                            <path d="M2 7h5"/>
+                            <path d="M2 17h5"/>
+                            <path d="M17 17h5"/>
+                            <path d="M17 7h5"/>
+                        </svg>
+                    </div>
+                    <h3>Extensive Database</h3>
+                    <p>Access a vast collection of movies and genres from all eras.</p>
+                </div>
+                <div class="feature-card fade-in-up" style="animation-delay: 0.4s">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" fill="none">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </div>
+                    <h3>Top Recommendations</h3>
+                    <p>Get personalized recommendations based on your preferences.</p>
+                </div>
+                <div class="feature-card fade-in-up" style="animation-delay: 0.6s">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" fill="none">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                    <h3>Upcoming Releases</h3>
+                    <p>Stay updated with the latest movie and genre release dates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <a href="{% url 'home' %}"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg" 
+                     alt="TMDB Logo"></a>
+            </div>
+    
+        <div class="footer-links">
+            <div class="footer-section">
+                <h3>The Basics</h3>
+                <ul>
+                    <li><a href="{% url 'about' %}">About TMDB</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+
+                    <li><a href="#">Support Forums</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">System Status</a></li>
+                </ul>
+            </div>
+    
+    
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="#">Guidelines</a></li>
+                    <li><a href="#">Discussions</a></li>
+                    <li><a href="#">Leaderboard</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">API Terms of Use</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">DMCA Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="social-footer">
+            <p class="social-text">Follow <span>TMDB</span> on</p>
+            <div class="social-icons" style="margin-top: 15px;">
+                <a href="#" class="si"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="si"><i class="fab fa-x-twitter"></i></a>
+                <a href="#" class="si"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="si"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+    
+    
+        <div class="footer-bottom">
+            <p>© 2025 The Movie Database (TMDB).  All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="scroll-to-top" id="scrollTopBtn">Back to Top 🔝</button>
+    <!DOCTYPE html>
+    <div class="chat-assistant-wrapper">
+        <!-- Chat toggle button -->
+        <button class="chat-toggle-button" id="chatToggleBtn" aria-label="Toggle chat support">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z" fill="currentColor"/>
+                <path d="M7 9H17V11H7V9ZM7 12H14V14H7V12ZM7 6H17V8H7V6Z" fill="currentColor"/>
+            </svg>
+        </button>
+        
+        <!-- Chat container -->
+        <div class="chat-container" id="chatContainer">
+            <!-- Chat header -->
+            <div class="chat-header">
+                <div class="chat-header-title">
+                  <div class="chat-avatar">
+                    <img src="/../static/images/TMDB_BOT.jpeg" alt="PopCorn Pal Icon" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                  </div>
+                  <div>
+                    <h2>&nbsp;🍿PopCorn Pal🎬</h2>
+                    <span class="chat-status"> Online</span>
+                  </div>
+                </div>
+                <button class="chat-close-btn" onclick="toggleChat()" aria-label="Close chat">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            
+            <!-- Chat messages area -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be inserted here -->
+            </div>
+            
+            <!-- Suggested questions -->
+            <div class="chat-suggestions">
+                <div class="suggestions-container">
+                    <button onclick="askQuestion('What are the top movies of 2024?')">Top movies of 2024</button>
+                    <button onclick="askQuestion('Recommend a comedy movie')">Comedy recommendations</button>
+                    <button onclick="askQuestion('Who won Best Picture Oscar?')">Best Picture winners</button>
+                </div>
+            </div>
+            
+            <!-- Chat input area -->
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" placeholder="Type your message..." aria-label="Message input">
+                <button class="chat-send-btn" onclick="sendMessage()" aria-label="Send message">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+    :root {
+        --primary: #2563eb;
+        --primary-light: #3b82f6;
+        --primary-dark: #1d4ed8;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-tertiary: #94a3b8;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --border: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --radius-sm: 0.125rem;
+        --radius: 0.25rem;
+        --radius-md: 0.375rem;
+        --radius-lg: 0.5rem;
+        --radius-xl: 0.75rem;
+        --radius-full: 9999px;
+        --transition: all 0.2s ease;
+    }
+    
+    /* Base styles */
+    .chat-assistant-wrapper {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        line-height: 1.5;
+        color: var(--text-primary);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Chat container */
+    .chat-container {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 380px;
+        max-width: calc(100vw - 40px);
+        height: 560px;
+        max-height: calc(100vh - 120px);
+        background-color: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 1000;
+        border: 1px solid var(--border);
+        display: none;
+    }
+    
+    /* Chat header */
+    .chat-header {
+        padding: 16px;
+        background-color: var(--bg-primary);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .chat-header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .chat-header-title h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    .chat-avatar {
+        width: 32px;
+        height: 32px;
+        background-color: var(--primary);
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .chat-status {
+        font-size: 12px;
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .chat-status::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: var(--success);
+        border-radius: var(--radius-full);
+    }
+    
+    .chat-close-btn {
+        width: 32px;
+        height: 32px;
+        background-color: transparent;
+        border: none;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-tertiary);
+        transition: var(--transition);
+    }
+    
+    .chat-close-btn:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+    
+    /* Chat messages */
+    .chat-messages {
+        flex: 1;
+        padding: 16px;
+        overflow-y: auto;
+        background-color: var(--bg-secondary);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .message {
+        display: flex;
+        flex-direction: column;
+        max-width: 80%;
+    }
+    
+    .message-user {
+        align-self: flex-end;
+    }
+    
+    .message-bot {
+        align-self: flex-start;
+    }
+    
+    .message-content {
+        padding: 12px 16px;
+        border-radius: var(--radius-lg);
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+    }
+    
+    .message-user .message-content {
+        background-color: var(--primary);
+        color: white;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 var(--radius-lg);
+    }
+    
+    .message-bot .message-content {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 0;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+    }
+    
+    .message-meta {
+        margin-top: 4px;
+        font-size: 11px;
+        color: var(--text-tertiary);
+        align-self: flex-end;
+    }
+    
+    .message-user .message-meta {
+        margin-right: 8px;
+    }
+    
+    .message-bot .message-meta {
+        margin-left: 8px;
+    }
+    
+    /* Chat suggestions */
+    .chat-suggestions {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        background-color: var(--bg-primary);
+    }
+    
+    .suggestions-container {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+    
+    .suggestions-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+    
+    .suggestions-container button {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-full);
+        padding: 6px 12px;
+        font-size: 13px;
+        white-space: nowrap;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    .suggestions-container button:hover {
+        background-color: var(--bg-secondary);
+        color: var(--primary);
+        border-color: var(--primary-light);
+    }
+    
+    /* Chat input */
+    .chat-input-container {
+        padding: 16px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 12px;
+        background-color: var(--bg-primary);
+    }
+    
+    #chatInput {
+        flex: 1;
+        padding: 10px 16px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-full);
+        font-size: 14px;
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+        transition: var(--transition);
+    }
+    
+    #chatInput:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        background-color: var(--bg-primary);
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+    
+    #chatInput::placeholder {
+        color: var(--text-tertiary);
+    }
+    
+    .chat-send-btn {
+        width: 40px;
+        height: 40px;
+        background-color: var(--primary);
+        border: none;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        transition: var(--transition);
+        flex-shrink: 0;
+    }
+    
+    .chat-send-btn:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    /* Chat toggle button */
+    .chat-toggle-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        background-color: var(--primary);
+        border: none;
+        border-radius: var(--radius-full);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+        transition: var(--transition);
+        z-index: 999;
+        box-shadow: var(--shadow-md);
+    }
+    
+    .chat-toggle-button:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    /* Typing indicator */
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 12px 16px;
+        background-color: var(--bg-primary);
+        border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 0;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        align-self: flex-start;
+        max-width: 80%;
+    }
+    
+    .typing-indicator-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--text-tertiary);
+        border-radius: var(--radius-full);
+        animation: typing-animation 1.5s infinite ease-in-out;
+    }
+    
+    .typing-indicator-dot:nth-child(1) {
+        animation-delay: 0s;
+    }
+    
+    .typing-indicator-dot:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+    
+    .typing-indicator-dot:nth-child(3) {
+        animation-delay: 0.6s;
+    }
+    
+    @keyframes typing-animation {
+        0%, 100% {
+            transform: translateY(0);
+            opacity: 0.5;
+        }
+        50% {
+            transform: translateY(-5px);
+            opacity: 1;
+        }
+    }
+    
+    /* System message */
+    .message-system .message-content {
+        background-color: #fff8e1;
+        color: #b45309;
+        border-color: #fcd34d;
+        border-radius: var(--radius-lg);
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+        align-self: center;
+        max-width: 90%;
+    }
+    
+    /* Utility classes */
+    .hidden {
+        display: none;
+    }
+    
+    /* Media queries */
+    @media (max-width: 480px) {
+        .chat-container {
+            width: 100%;
+            max-width: none;
+            height: calc(100vh - 80px);
+            max-height: none;
+            bottom: 70px;
+            right: 0;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        
+        .chat-toggle-button {
+            width: 50px;
+            height: 50px;
+            right: 16px;
+            bottom: 16px;
+        }
+    }
+    </style>
+    
+    <script>
+    // Initialize chat
+    document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners
+    document.getElementById('chatToggleBtn').addEventListener('click', toggleChat);
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Initialize the chat with a welcome message after a short delay
+    setTimeout(function() {
+        addMessage('bot', 'Hello! I\'m your support assistant. How can I help you today?');
+    }, 300);
+});
+
+// Movie-specific responses
+const responses = {
+    "What are the top movies of 2024?": "Based on critics' ratings and box office performance, these are the top movies of 2024 so far:\n\n• Dune: Part Two\n• Inside Out 2\n• Deadpool & Wolverine\n• Gladiator II\n• Wicked\n\nWould you like more details about any of these films?",
+    
+    "Recommend a comedy movie": "Here are some highly-rated comedy recommendations:\n\n• The Grand Budapest Hotel – quirky comedy with visual splendor\n• Barbie – satire with cultural commentary\n• Knives Out – mystery comedy with sharp wit\n• Everything Everywhere All at Once – absurdist comedy drama\n• Palm Springs – innovative romantic comedy\n\nWould you like more specific recommendations based on your preferences?",
+    
+    "Who won Best Picture Oscar?": "The most recent Best Picture Oscar winner was 'Oppenheimer' directed by Christopher Nolan. It won at the 96th Academy Awards held in March 2024, along with several other major categories including Best Director."
+};
+
+// Chat visibility state
+let isChatVisible = false;
+
+// Toggle chat visibility
+function toggleChat() {
+    const chatContainer = document.getElementById('chatContainer');
+    if (isChatVisible) {
+        chatContainer.style.display = 'none';
+    } else {
+        chatContainer.style.display = 'flex';
+        // Focus on input field when chat opens
+        setTimeout(() => {
+            document.getElementById('chatInput').focus();
+        }, 100);
+    }
+    isChatVisible = !isChatVisible;
+}
+
+// Add a message to the chat
+function addMessage(type, text) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = type === 'user' ? 'message message-user' : 'message message-bot';
+    
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    
+    // Process text with line breaks
+    text = text.replace(/\n/g, '<br>');
+    
+    messageContent.innerHTML = text;
+    messageDiv.appendChild(messageContent);
+    
+    // Add timestamp
+    const timestamp = document.createElement('div');
+    timestamp.className = 'message-meta';
+    const now = new Date();
+    timestamp.textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    messageDiv.appendChild(timestamp);
+    
+    chatMessages.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Add a typing indicator
+function showTypingIndicator() {
+    const chatMessages = document.getElementById('chatMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+    typingDiv.id = 'typingIndicator';
+    
+    for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-indicator-dot';
+        typingDiv.appendChild(dot);
+    }
+    
+    chatMessages.appendChild(typingDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Remove typing indicator
+function removeTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.remove();
+    }
+}
+
+// Send a message
+function sendMessage() {
+    const chatInput = document.getElementById('chatInput');
+    const message = chatInput.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message
+    addMessage('user', message);
+    
+    // Clear input
+    chatInput.value = '';
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Process response
+    // Check if it's a predefined question which can respond faster
+    if (responses[message]) {
+        // Simulate typing time proportional to response length (faster for predefined responses)
+        const typingTime = Math.min(1500, 500 + responses[message].length * 3);
+        
+        setTimeout(() => {
+            removeTypingIndicator();
+            addMessage('bot', responses[message]);
+        }, typingTime);
+    } else {
+        // For API calls, show a longer typing indicator to manage user expectations
+        processMessageWithAPI(message);
+    }
+}
+
+// Ask a predefined question
+function askQuestion(question) {
+    // Add user message
+    addMessage('user', question);
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    // Process response with delay
+    // Check if it's a predefined question
+    if (responses[question]) {
+        // Simulate typing time proportional to response length
+        const typingTime = Math.min(1500, 500 + responses[question].length * 3);
+        
+        setTimeout(() => {
+            removeTypingIndicator();
+            addMessage('bot', responses[question]);
+        }, typingTime);
+    } else {
+        // Make API call
+        processMessageWithAPI(question);
+    }
+}
+
+// Process message with API
+function processMessageWithAPI(message) {
+    // In a real implementation, this would make an API call
+    
+    // Set a minimum typing indicator time for API responses
+    const minTypingTime = 3000; // 3 seconds minimum typing time
+    const startTime = Date.now();
+    
+    // Simulate API call with fetch
+    fetch("{% url 'chatbot_api' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const reply = data.response || "I don't have specific information about that. Is there something else I can help you with?";
+        
+        // Calculate how long the API call took
+        const apiCallTime = Date.now() - startTime;
+        
+        // If API responded too quickly, keep showing typing indicator for minimum time
+        // This ensures the typing indicator displays for at least minTypingTime milliseconds
+        if (apiCallTime < minTypingTime) {
+            setTimeout(() => {
+                removeTypingIndicator();
+                addMessage('bot', reply);
+            }, minTypingTime - apiCallTime);
+        } else {
+            // API already took longer than minimum time, show response immediately
+            removeTypingIndicator();
+            addMessage('bot', reply);
+        }
+    })
+    .catch(error => {
+        // Handle error
+        console.error("API error:", error);
+        
+        // Still ensure minimum typing time before showing error
+        const apiCallTime = Date.now() - startTime;
+        if (apiCallTime < minTypingTime) {
+            setTimeout(() => {
+                removeTypingIndicator();
+                addMessage('bot', "I apologize, but I'm having trouble processing your request right now. Please try again later.");
+            }, minTypingTime - apiCallTime);
+        } else {
+            removeTypingIndicator();
+            addMessage('bot', "I apologize, but I'm having trouble processing your request right now. Please try again later.");
+        }
+    });
+}</script>
+
+   
+    <script>
+        window.onload = function() {
+        let prevScrollPos = window.pageYOffset;
+        const navbar = document.getElementById('navbar');
+    
+        window.onscroll = function() {
+            let currentScrollPos = window.pageYOffset;
+            if (prevScrollPos > currentScrollPos) {
+                navbar.style.top = "0";
+            } else {
+                navbar.style.top = "-80px"; // Adjust according to navbar height
+            }
+            prevScrollPos = currentScrollPos;
+        };
+    };
+    
+    // Function to filter movies based on the search input
+    function filterMovies() {
+        var input, filter, movies, movieTitle, i;
+        input = document.getElementById("searchInput");
+        filter = input.value.toLowerCase();
+        movies = document.querySelectorAll(".movie-card");
+    
+        for (i = 0; i < movies.length; i++) {
+            movieTitle = movies[i].querySelector(".title");
+            if (movieTitle) {
+                if (movieTitle.innerText.toLowerCase().indexOf(filter) > -1) {
+                    movies[i].classList.remove("hidden");
+                } else {
+                    movies[i].classList.add("hidden");
+                }
+            }
+        }
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+                const darkModeToggle = document.querySelector("#darkModeToggle"); // Use querySelector to be more specific
+                const body = document.body;
+    
+                if (localStorage.getItem("dark-mode") === "enabled") {
+                    body.classList.add("dark-mode");
+                    darkModeToggle.innerHTML = "☀";
+                } else {
+                    darkModeToggle.innerHTML = "🌙";
+                }
+    
+                darkModeToggle.addEventListener("click", function () {
+                    body.classList.toggle("dark-mode");
+    
+                    if (body.classList.contains("dark-mode")) {
+                        darkModeToggle.innerHTML = "☀";
+                        localStorage.setItem("dark-mode", "enabled");
+                    } else {
+                        darkModeToggle.innerHTML = "🌙";
+                        localStorage.setItem("dark-mode", "disabled");
+                    }
+                });
+            });
+            const scrollToTopBtn = document.getElementById('scrollTopBtn');
+
+// Monitor scroll events
+window.onscroll = function() {
+  // Show button when scrolled down
+  if (document.documentElement.scrollTop > 200) {
+    scrollToTopBtn.style.display = 'block';
+  } else {
+    // Hide button when at the top of the page
+    scrollToTopBtn.style.display = 'none';
+  }
+};
+
+// Add smooth scrolling behavior
+scrollToTopBtn.onclick = function() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
+
+      document.addEventListener("DOMContentLoaded", () => {
+            const bollywoodElements = document.querySelectorAll(".bollywood");
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const element = entry.target;
+                            const text = element.getAttribute("data-text");
+
+                            // Clear the span and create letter elements
+                            element.innerHTML = ""; // Clear the existing text
+                            text.split("").forEach((letter, index) => {
+                                const span = document.createElement("span");
+                                span.classList.add("letter");
+                                span.textContent = letter;
+
+                                // Delay the appearance of each letter
+                                setTimeout(() => {
+                                    span.classList.add("visible");
+                                }, index * 75);
+
+                                element.appendChild(span);
+                            });
+
+                            // Stop observing once animated
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                },
+                { threshold: 0.5 } // Trigger when 50% of the element is visible
+            );
+
+            // text animation
+            bollywoodElements.forEach(element => observer.observe(element));
+        });
+    
+        function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.bottom >= 0
+        );
+    }
+
+    // Function to handle animation on scroll
+    function handleScrollAnimation() {
+        const elements = document.querySelectorAll('.fade-in, .fade-in-up');
+        elements.forEach(el => {
+            if (isInViewport(el)) {
+                el.classList.add('active');
+            }
+        });
+    }
+
+    // Run the animation handler on page load and scroll
+    window.addEventListener('load', handleScrollAnimation);
+    window.addEventListener('scroll', handleScrollAnimation);
+
+    
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>.messages-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 350px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    .alert {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 14px 16px;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideIn 0.3s ease-out forwards;
+        position: relative;
+        border-left: 4px solid;
+    }
+    
+    @keyframes slideIn {
+        0% {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .alert-icon {
+        margin-right: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .alert-content {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+    }
+    
+    .alert-close {
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        padding: 5px;
+    }
+    
+    .alert-close:hover {
+        opacity: 1;
+    }
+    
+    /* Success alert */
+    .alert-success {
+        background-color: #f0fdf4;
+        color: #166534;
+        border-left-color: #22c55e;
+    }
+    
+    .alert-success .alert-icon {
+        color: #22c55e;
+    }
+    
+    /* Info alert */
+    .alert-info {
+        background-color: #f0f9ff;
+        color: #0c4a6e;
+        border-left-color: #0ea5e9;
+    }
+    
+    .alert-info .alert-icon {
+        color: #0ea5e9;
+    }
+    
+    /* Warning alert */
+    .alert-warning {
+        background-color: #fffbeb;
+        color: #854d0e;
+        border-left-color: #f59e0b;
+    }
+    
+    .alert-warning .alert-icon {
+        color: #f59e0b;
+    }
+    
+    /* Error alert */
+    .alert-error {
+        background-color: #fef2f2;
+        color: #b91c1c;
+        border-left-color: #ef4444;
+    }
+    
+    .alert-error .alert-icon {
+        color: #ef4444;
+    }</style>
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <div class="alert-icon">
+                {% if message.tags == 'success' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                {% elif message.tags == 'info' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                {% elif message.tags == 'warning' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                {% elif message.tags == 'error' %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                {% endif %}
+            </div>
+            <div class="alert-content">
+                <span>{{ message }}</span>
+            </div>
+            <div class="alert-close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</form>
+</div>
+<script>// Add this JavaScript to make the close button work
+document.addEventListener('DOMContentLoaded', function() {
+document.querySelectorAll('.alert-close').forEach(function(closeBtn) {
+    closeBtn.addEventListener('click', function() {
+        const alert = this.closest('.alert');
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(100%)';
+        alert.style.transition = 'opacity 0.3s, transform 0.3s';
+        
+        setTimeout(function() {
+            alert.remove();
+        }, 300);
+    });
+});
+
+// Auto-dismiss alerts after 5 seconds
+setTimeout(function() {
+    document.querySelectorAll('.alert').forEach(function(alert, index) {
+        setTimeout(function() {
+            alert.style.opacity = '0';
+            alert.style.transform = 'translateX(100%)';
+            alert.style.transition = 'opacity 0.3s, transform 0.3s';
+            
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        }, index * 200); // Staggered dismissal
+    });
+}, 5000);
+});</script>
+</body>
+</html>
+

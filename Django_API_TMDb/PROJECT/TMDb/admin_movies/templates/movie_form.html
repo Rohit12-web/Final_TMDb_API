@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <title>{% block title %}Admin - Add/Edit Movies - TMDB{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+    {% load static %}
+    <style>
+        :root {
+            --primary-color: #e50914;
+            --dark-bg: #141414;
+            --card-bg: #222;
+            --light-text: #e5e5e5;
+            --muted-text: #b3b3b3;
+            --transition-speed: 0.3s;
+            --form-bg: #1a1a1a;
+            --input-bg: #333;
+            --border-color: #444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #0c0c0c;
+            color: var(--light-text);
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--dark-bg);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-links a:hover {
+            color: #187fd3;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 120px 20px 80px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .card {
+            background-color: var(--form-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            background: linear-gradient(rgba(51, 87, 153, 0.7),rgb(18, 57, 148));
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--light-text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--light-text);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-text {
+            display: block;
+            margin-top: 6px;
+            font-size: 14px;
+            color: var(--muted-text);
+        }
+
+        /* Checkbox */
+        .form-check {
+            display:inline-flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 5px;
+            padding: 5px;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+        }
+
+        .text-danger {
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #c50c14;
+        }
+
+        .btn-secondary {
+            background-color: #333;
+            color: var(--light-text);
+        }
+
+        .btn-secondary:hover {
+            background-color: #444;
+        }
+
+        /* Preview section */
+        .preview {
+            background-color: var(--form-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 30px;
+        }
+
+        .preview-header {
+            background-color: #187fd3;
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .preview-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .preview-poster {
+            max-width: 300px;
+            margin: 0 auto 20px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-poster img {
+            width: 100%;
+            display: block;
+        }
+
+        .preview-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .preview-date {
+            color: var(--muted-text);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .preview-badge {
+            display: inline-block;
+            background-color: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .preview-description {
+            color: var(--muted-text);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px;
+            text-align: center;
+            color: var(--muted-text);
+            font-size: 0.9rem;
+            background-color: var(--dark-bg);
+            margin-top: 40px;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            z-index: 1000;
+            background-color: #333;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            display: none;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+                position: static;
+            }
+            
+            .container {
+                padding-top: 30px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo"><a href="{% url 'home3' %}"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_1-8ba2ac31f354005783fab473602c34c3f4fd207150182061e425d366e4f34596.svg" alt="TMDB Logo" width="67%"></a></div>
+        <nav class="nav-links">
+            <a href="{% url 'home3' %}">Movies</a>
+            <a href="#">TV Shows</a>
+            <a href="#">Upcoming</a>
+            <a href="{% url 'watchlist' %}">My List</a>
+            {% if user.is_authenticated %}
+                
+                <a href="{% url 'logout' %}">Logout ({{ user.username }})</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Content -->
+    <div class="container">
+        <h1 style="color: #187fd3;;">{{ action }} Movie</h1>
+        
+        <div class="card">
+            <div class="card-header" style="text-align: center;">
+                Movie Details
+            </div>
+            <div class="card-body">
+                <form method="post" id="movieForm">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="id_title">Movie Title</label>
+                        <input type="text" name="{{ form.title.name }}" id="id_title" class="form-control" placeholder="Enter movie title" value="{{ form.title.value|default:'' }}">
+                        {% if form.title.errors %}
+                        <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_description">Description</label>
+                        <textarea name="{{ form.description.name }}" id="id_description" class="form-control" placeholder="Enter movie description">{{ form.description.value|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                        <div class="text-danger">{{ form.description.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_release_date">Release Date</label>
+                        <input type="date" name="{{ form.release_date.name }}" id="id_release_date" class="form-control" value="{{ form.release_date.value|date:'Y-m-d'|default:'' }}">
+                        {% if form.release_date.errors %}
+                        <div class="text-danger">{{ form.release_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="id_image_url">Poster Image URL</label>
+                        <input type="url" name="{{ form.image_url.name }}" id="id_image_url" class="form-control" placeholder="https://example.com/image.jpg" value="{{ form.image_url.value|default:'' }}">
+                        <small class="form-text">Enter a URL for the movie poster image</small>
+                        {% if form.image_url.errors %}
+                        <div class="text-danger">{{ form.image_url.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-check">
+                        <input type="checkbox" name="{{ form.is_coming_this_month.name}}" id="is_coming_this_month" class="form-check-input" {% if form.is_coming_this_month.value %}checked{% endif %}>
+                        <label class="form-check-label" for="is_coming_this_month">Latest Movies</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="{{ form.is_coming_next_month.name }}" id="is_coming_next_month" class="form-check-input" {% if form.is_coming_next_month.value %}checked{% endif %}>
+                        <label class="form-check-label" for="is_coming_next_month">Web Series & TV Dramas</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" name="{{ form.is_oscar_contender.name }}" id="id_is_oscar_contender" class="form-check-input" {% if form.is_oscar_contender.value %}checked{% endif %}>
+                        <label class="form-check-label" for="id_is_oscar_contender">Oscar Contender</label>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary" id="saveButton" style="background-color: #187fd3;">
+                            <span class="spinner"></span>
+                            Save Movie
+                        </button>
+                        <a href="{% url 'admin_movie_list' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        {% if movie %}
+        <div class="preview">
+            <div class="preview-header">
+                Preview
+            </div>
+            <div class="preview-body">
+                <div class="preview-poster">
+                    <img src="{{ movie.image_url }}" alt="{{ movie.title }}">
+                </div>
+                <h3 class="preview-title">{{ movie.title }}</h3>
+                <p class="preview-date">{{ movie.release_date|date:"F d, Y" }}</p>
+                
+                {% if movie.is_oscar_contender %}
+                <span class="preview-badge">Oscar Winners</span>
+                {% endif %}
+                
+                <div class="preview-description">
+                    {{ movie.description }}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="preview" id="previewCard" style="display: none;">
+            <div class="preview-header">
+                Preview
+            </div>
+            <div class="preview-body">
+                <div class="preview-poster">
+                    <img src="" alt="Preview" id="previewImage">
+                </div>
+                <h3 class="preview-title" id="previewTitle">Movie Title</h3>
+                <p class="preview-date" id="previewDate">Release Date</p>
+                
+                <span class="preview-badge" id="previewBadge" style="display: none;">Oscar Winners</span>
+                
+                <div class="preview-description" id="previewDescription">
+                    Movie description will appear here.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 TMDB Movies. All rights reserved. This is a demo page.</p>
+    </footer>
+
+    <div class="notification" id="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form Loading State
+            const form = document.getElementById('movieForm');
+            const saveButton = document.getElementById('saveButton');
+            
+            if (form) {
+                form.addEventListener('submit', function() {
+                    saveButton.classList.add('loading');
+                    saveButton.disabled = true;
+                });
+            }
+            
+            // Function to show notification
+            window.showNotification = function(message) {
+                const notification = document.getElementById('notification');
+                const notificationText = document.getElementById('notificationText');
+                
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Live preview functionality
+            const imageUrlInput = document.getElementById('id_image_url');
+            const titleInput = document.getElementById('id_title');
+            const releaseDateInput = document.getElementById('id_release_date');
+            const descriptionInput = document.getElementById('id_description');
+            const oscarCheckbox = document.getElementById('id_is_oscar_contender');
+            
+            // Preview elements
+            const previewCard = document.getElementById('previewCard');
+            const previewImage = document.getElementById('previewImage');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewDate = document.getElementById('previewDate');
+            const previewBadge = document.getElementById('previewBadge');
+            const previewDescription = document.getElementById('previewDescription');
+            
+            // Format date for display
+            function formatDate(dateString) {
+                if (!dateString) return 'Release Date';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+            
+            function updatePreview() {
+                if (imageUrlInput && imageUrlInput.value) {
+                    // Show preview card if it exists
+                    if (previewCard) {
+                        previewCard.style.display = 'block';
+                    }
+                    
+                    // Update image
+                    if (previewImage) {
+                        previewImage.src = imageUrlInput.value;
+                    }
+                    
+                    // Update title
+                    if (previewTitle) {
+                        previewTitle.textContent = titleInput.value || 'Movie Title';
+                    }
+                    
+                    // Update date
+                    if (previewDate) {
+                        previewDate.textContent = formatDate(releaseDateInput.value);
+                    }
+                    
+                    // Update Oscar badge
+                    if (previewBadge) {
+                        previewBadge.style.display = oscarCheckbox.checked ? 'inline-block' : 'none';
+                    }
+                    
+                    // Update description
+                    if (previewDescription) {
+                        previewDescription.textContent = descriptionInput.value || 'Movie description will appear here.';
+                    }
+                }
+            }
+            
+            // Add event listeners for live preview
+            if (imageUrlInput) {
+                imageUrlInput.addEventListener('input', updatePreview);
+                titleInput.addEventListener('input', updatePreview);
+                releaseDateInput.addEventListener('input', updatePreview);
+                descriptionInput.addEventListener('input', updatePreview);
+                oscarCheckbox.addEventListener('change', updatePreview);
+                
+                // Initial update
+                updatePreview();
+            }
+        });
+    </script>
+</body>
+</html>

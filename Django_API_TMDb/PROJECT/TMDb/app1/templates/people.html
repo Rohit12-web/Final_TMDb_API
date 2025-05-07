@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <title>Popular Faces</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(rgb(55, 153, 141), rgba(24, 167, 207, 0.7));
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .filter-btn {
+           
+            background-color: white;
+            border: 2px solid rgb(55, 153, 141);
+            color: rgba(24, 167, 207, 0.7);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background-color:rgba(24, 167, 207, 0.7) ;
+            color: white;
+        }
+        
+        .filter-btn.active {
+            background-color:rgb(55, 153, 141);
+            color: white;
+        }
+        
+        .search-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 1rem auto;
+            position: relative;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .celebrity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .celebrity-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .celebrity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-image {
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .celebrity-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .celeb-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .celeb-category {
+            color: #ff5f6d;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        
+        .celeb-details {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .show-more {
+            display: block;
+            margin-top: 1rem;
+            color: #ff5f6d;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .celebrity-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 3rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bollywood Industry Icons</h1>
+        <p class="subtitle">Celebrating the stars of Indian cinema</p>
+    </header>
+    
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for celebrities...">
+        </div>
+        
+        <div class="controls">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="actor">Actors</button>
+            <button class="filter-btn" data-filter="actress">Actresses</button>
+            <button class="filter-btn" data-filter="director">Directors</button>
+            <button class="filter-btn" data-filter="producer">Producers</button>
+        </div>
+        
+        <div class="celebrity-grid" id="celebrityGrid">
+            <!-- Grid will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Bollywood Industry Icons | All rights reserved</p>
+    </footer>
+
+    <script>
+        // Celebrity data
+        const celebrities = [
+            {
+                name: "Shah Rukh Khan",
+                category: "actor",
+                image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVX0RoHny1N885uYmhTgEL93srwWgigX4duA&s",
+                details: "Known as the 'King of Bollywood', Shah Rukh Khan has appeared in more than 80 films and earned numerous accolades, including 14 Filmfare Awards. Famous for iconic romantic roles and his trademark open-arms pose.",
+                famousWorks: ["Dilwale Dulhania Le Jayenge", "Kuch Kuch Hota Hai", "Pathaan", "My Name Is Khan"]
+            },
+            {
+                name: "Aamir Khan",
+                category: "actor",
+                image: "data:image/jpeg;base64,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",
+                details: "Renowned for his perfectionism and versatility, Aamir Khan is known for choosing socially relevant films. He's famous for his complete transformations for roles and his meticulous approach to filmmaking.",
+                famousWorks: ["Lagaan", "Dangal", "3 Idiots", "Taare Zameen Par"]
+            },
+            {
+                name: "Amitabh Bachchan",
+                category: "actor",
+                image: "data:image/jpeg;base64,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",
+                details: "The 'Angry Young Man' of Bollywood, Amitabh Bachchan has a career spanning over five decades with countless iconic performances. He's known for his deep, distinctive voice and commanding screen presence.",
+                famousWorks: ["Sholay", "Deewaar", "Black", "Piku"]
+            },
+            {
+                name: "Deepika Padukone",
+                category: "actress",
+                image: "https://images.news18.com/ibnlive/uploads/2022/05/deepika-padukone-cannes.jpg",
+                details: "Starting as a model, Deepika Padukone rose to become one of Bollywood's highest-paid actresses. Known for her elegant screen presence and diverse role selections, she has also made her mark internationally.",
+                famousWorks: ["Padmaavat", "Chennai Express", "Piku", "Bajirao Mastani"]
+            },
+            {
+                name: "Alia Bhatt",
+                category: "actress",
+                image: "https://th.bing.com/th/id/OIF.XkOrMpUHkrPM4X0tOYGUUQ?w=266&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "Despite her young age, Alia Bhatt has established herself as one of the most talented actresses of her generation. Known for her emotional range and willingness to take challenging roles.",
+                famousWorks: ["Highway", "Raazi", "Gangubai Kathiawadi", "Udta Punjab"]
+            },
+            {
+                name: "Madhuri Dixit",
+                category: "actress",
+                image: "https://th.bing.com/th/id/OIP.kHcVlCL5QrWqwOt5LJZJcAHaJ_?w=208&h=281&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "The 'Dhak Dhak Girl' of Bollywood, Madhuri Dixit dominated the industry in the 1980s and 1990s. She's renowned for her exceptional dancing skills and expressive acting.",
+                famousWorks: ["Hum Aapke Hain Koun..!", "Devdas", "Dil To Pagal Hai", "Beta"]
+            },
+            {
+                name: "Sanjay Leela Bhansali",
+                category: "director",
+                image: "https://th.bing.com/th/id/OIP.WAFNZcBtgUAw0NPYxy9JJwHaIB?w=173&h=189&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "Known for his visually opulent films and attention to detail, Bhansali has created some of Bollywood's most spectacular productions. His works often feature lavish sets, intricate costumes, and intense emotions.",
+                famousWorks: ["Black", "Devdas", "Bajirao Mastani", "Padmaavat"]
+            },
+            {
+                name: "Karan Johar",
+                category: "director",
+                image: "https://th.bing.com/th/id/OIP.ddttE_7rjPtwWPRoDEuhwwHaF7?w=209&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "A director, producer, and TV personality, Karan Johar has significantly influenced modern Bollywood. His films often explore themes of love, friendship, and family relationships with a glossy, upscale aesthetic.",
+                famousWorks: ["Kuch Kuch Hota Hai", "Kabhi Khushi Kabhie Gham", "My Name Is Khan", "Ae Dil Hai Mushkil"]
+            },
+            {
+                name: "Yash Chopra",
+                category: "director",
+                image: "https://th.bing.com/th/id/OIP.MyjY68orFfU3LYnDqo6I6AHaJ-?w=136&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "The 'King of Romance' who founded Yash Raj Films, one of India's largest film studios. Yash Chopra's romantic films set in picturesque European landscapes became a trademark style in Bollywood.",
+                famousWorks: ["Dil To Pagal Hai", "Veer-Zaara", "Silsila", "Chandni"]
+            },
+            {
+                name: "Aditya Chopra",
+                category: "producer",
+                image: "https://th.bing.com/th/id/OIP.AXWUxd0c596ZkyJOvs5KfgHaLZ?w=115&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "Son of Yash Chopra and the current chairman of Yash Raj Films, Aditya has produced numerous blockbusters and directed the iconic 'Dilwale Dulhania Le Jayenge', one of the longest-running films in Indian cinema.",
+                famousWorks: ["Dilwale Dulhania Le Jayenge", "Mohabbatein", "Rab Ne Bana Di Jodi"]
+            },
+            {
+                name: "Ekta Kapoor",
+                category: "producer",
+                image: "https://th.bing.com/th/id/OIP.yWZZ_d60QR4hGeBs8R0j_QHaLM?w=203&h=307&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "Known as the 'Czarina of Television', Ekta Kapoor transformed Indian TV before making her mark in film production. Her company Balaji Telefilms has produced numerous hit shows and movies.",
+                famousWorks: ["The Dirty Picture", "Ragini MMS", "Dream Girl", "Veere Di Wedding"]
+            },
+            {
+                name: "Ronnie Screwvala",
+                category: "producer",
+                image: "https://th.bing.com/th/id/OIF.2ml8fowVloDu79JHqFcWuQ?w=170&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                details: "A pioneering producer and entrepreneur who founded UTV Group. Screwvala has backed both mainstream commercial films and critically acclaimed projects that have redefined modern Indian cinema.",
+                famousWorks: ["Rang De Basanti", "Barfi!", "Uri: The Surgical Strike", "Chennai Express"]
+            }
+        ];
+
+        // Function to render the celebrity cards
+        function renderCelebrities(celebs) {
+            const grid = document.getElementById('celebrityGrid');
+            grid.innerHTML = '';
+            
+            if (celebs.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<h3>No celebrities found matching your search</h3>';
+                grid.appendChild(noResults);
+                return;
+            }
+            
+            celebs.forEach(celeb => {
+                const card = document.createElement('div');
+                card.className = 'celebrity-card';
+                
+                let famousWorksHTML = '';
+                if (celeb.famousWorks && celeb.famousWorks.length) {
+                    famousWorksHTML = `
+                        <p><strong>Famous Works:</strong> ${celeb.famousWorks.join(', ')}</p>
+                    `;
+                }
+                
+                card.innerHTML = `
+                    <div class="card-image">
+                        <img src="${celeb.image}" alt="${celeb.name}">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="celeb-name">${celeb.name}</h3>
+                        <span class="celeb-category">${capitalizeFirstLetter(celeb.category)}</span>
+                        <p class="celeb-details">${celeb.details}</p>
+                        ${famousWorksHTML}
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Initial render
+        renderCelebrities(celebrities);
+        
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                let filteredCelebs;
+                
+                if (filter === 'all') {
+                    filteredCelebs = celebrities;
+                } else {
+                    filteredCelebs = celebrities.filter(celeb => celeb.category === filter);
+                }
+                
+                // Apply search filter if there's text in the search input
+                const searchText = document.getElementById('searchInput').value.toLowerCase();
+                if (searchText) {
+                    filteredCelebs = filteredCelebs.filter(celeb => 
+                        celeb.name.toLowerCase().includes(searchText) || 
+                        celeb.details.toLowerCase().includes(searchText)
+                    );
+                }
+                
+                renderCelebrities(filteredCelebs);
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            const searchText = this.value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+            
+            let filteredCelebs;
+            if (activeFilter === 'all') {
+                filteredCelebs = celebrities;
+            } else {
+                filteredCelebs = celebrities.filter(celeb => celeb.category === activeFilter);
+            }
+            
+            // Then apply search filter
+            if (searchText) {
+                filteredCelebs = filteredCelebs.filter(celeb => 
+                    celeb.name.toLowerCase().includes(searchText) || 
+                    celeb.details.toLowerCase().includes(searchText)
+                );
+            }
+            
+            renderCelebrities(filteredCelebs);
+        });
+    </script>
+</body>
+</html>

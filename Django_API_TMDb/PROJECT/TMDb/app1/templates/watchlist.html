@@ -1,0 +1,533 @@
+{% extends 'base.html' %}
+
+{% block title %}My Watchlist - TMDB{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Remove the extra space above header by overriding base template's header */
+    header {
+        background: none;
+        position: absolute;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    body {
+        background-color: var(--dark-bg);
+        padding-top: 0; /* Remove any padding at the top */
+    }
+    
+    .watchlist-header {
+        background: linear-gradient(to right, rgba(20,20,20,0.9) 40%, rgba(249, 17, 17, 0.2));
+        padding: 30px 40px;
+        border-radius: 8px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .page-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .watchlist-stats {
+        font-size: 1.1rem;
+        color: #e5e5e5;
+        padding: 8px 16px;
+        background-color: rgba(1, 124, 255, 0.3);
+        border-radius: 20px;
+        border-left: 3px solid rgb(53, 106, 174);
+    }
+    
+    .movie-grid-container {
+        position: relative;
+        padding: 10px;
+        perspective: 1000px;
+        margin-bottom: 60px;
+    }
+    
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 30px;
+        transition: transform 0.3s ease;
+        transform-style: preserve-3d;
+    }
+    
+    .movie-card {
+        position: relative;
+        height: 400px; /* Increased height to ensure full visibility */
+        min-width: auto;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+    
+    .movie-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, 
+            rgba(0,0,0,0.1) 0%, 
+            rgba(0,0,0,0.3) 50%, 
+            rgba(0,0,0,0.8) 100%);
+        z-index: 1;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    .movie-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.4);
+    }
+    
+    .movie-card:hover::before {
+        opacity: 0.9;
+    }
+    
+    .movie-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top; /* Ensure visibility of important parts */
+    }
+    
+    .movie-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        z-index: 2;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+        background: linear-gradient(to top, 
+            rgba(0,0,0,0.9) 0%, 
+            rgba(0,0,0,0.7) 50%, 
+            rgba(0,0,0,0) 100%); /* Stronger gradient for better text visibility */
+    }
+    
+    .movie-card:hover .movie-info {
+        transform: translateY(-5px);
+    }
+    
+    .movie-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .movie-release {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-bottom: 8px;
+        color: #e5e5e5;
+    }
+    
+    .movie-description {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: #e5e5e5;
+        opacity: 0.9;
+    }
+    
+    .added-date {
+        font-size: 0.75rem;
+        margin: 8px 0;
+        color: #b3b3b3;
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 10px;
+        background: rgba(0,0,0,0.3);
+    }
+    
+    .remove-btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: red;
+        color: white;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .remove-btn:hover {
+        background: red;
+        box-shadow: 0 4px 8px rgba(36, 31, 31, 0.5);
+    }
+    
+    .empty-watchlist {
+        background: linear-gradient(135deg, rgba(20,20,20,0.9) 0%, rgba(40,40,40,0.8) 100%);
+        border-radius: 12px;
+        padding: 50px 30px;
+        text-align: center;
+        margin: 50px auto;
+        max-width: 600px;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+    }
+    
+    .browse-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .browse-btn:hover {
+        background-color: #f40612;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(229,9,20,0.5);
+    }
+    
+    /* Main content container adjustments */
+    .main-container {
+        padding-top: 70px; /* Space for the fixed header */
+    }
+    
+    @media (max-width: 768px) {
+        .watchlist-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .movie-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+        
+        .movie-card {
+            height: 320px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .movie-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+        
+        .movie-card {
+            height: 270px;
+        }
+        
+        .movie-title {
+            font-size: 0.9rem;
+        }
+        
+        .movie-description {
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-container">
+    <div class="container">
+        <div class="watchlist-header">
+            <h1 class="page-title">My Watchlist</h1>
+            {% if watchlist_items %}
+            <div class="watchlist-stats">{{ watchlist_items|length }} Title{% if watchlist_items|length != 1 %}s{% endif %}</div>
+            {% endif %}
+        </div>
+        
+        {% if messages %}
+        <div class="messages" style="margin-bottom: 25px;">
+            {% for message in messages %}
+            <div style="background-color: rgba(0,0,0,0.7); border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 4px; margin-bottom: 10px;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if watchlist_items %}
+        <div class="movie-grid-container">
+            <div class="movie-grid">
+                {% for item in watchlist_items %}
+                <div class="movie-card">
+                    <img src="{{ item.movie.image_url }}" alt="{{ item.movie.title }}">
+                    <div class="movie-info">
+                        <div class="movie-title">{{ item.movie.title }}</div>
+                        <div class="movie-release">Released: {{ item.movie.release_date|date:"F d, Y" }}</div>
+                        <div class="movie-description">{{ item.movie.description|truncatewords:15 }}</div>
+                        <div class="added-date">
+                            Added: {{ item.added_at|date:"F d, Y" }}
+                        </div>
+                        <form method="post" action="{% url 'toggle_watchlist' item.movie.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="remove-btn">
+                                Remove from Watchlist
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-watchlist">
+            <div class="empty-icon">📋</div>
+            <div style="font-size: 1.5rem; margin-bottom: 15px; font-weight: 600;">Your watchlist is empty</div>
+            <p style="color: #b3b3b3; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                Discover exciting movies and add them to your watchlist to keep track of what you want to watch next
+            </p>
+            <a href="{% url 'home3' %}" class="browse-btn" style="background-color: #0ea5e9;">Browse Movies</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<style>.messages-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 350px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease-out forwards;
+    position: relative;
+    border-left: 4px solid;
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert-icon {
+    margin-right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-content {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.alert-close {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    padding: 5px;
+}
+
+.alert-close:hover {
+    opacity: 1;
+}
+
+/* Success alert */
+.alert-success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border-left-color: #22c55e;
+}
+
+.alert-success .alert-icon {
+    color: #22c55e;
+}
+
+/* Info alert */
+.alert-info {
+    background-color: #f0f9ff;
+    color: #0c4a6e;
+    border-left-color: #0ea5e9;
+}
+
+.alert-info .alert-icon {
+    color: #0ea5e9;
+}
+
+/* Warning alert */
+.alert-warning {
+    background-color: #fffbeb;
+    color: #854d0e;
+    border-left-color: #f59e0b;
+}
+
+.alert-warning .alert-icon {
+    color: #f59e0b;
+}
+
+/* Error alert */
+.alert-error {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-left-color: #ef4444;
+}
+
+.alert-error .alert-icon {
+    color: #ef4444;
+}</style>
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        <div class="alert-icon">
+            {% if message.tags == 'success' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            {% elif message.tags == 'info' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            {% elif message.tags == 'warning' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            {% elif message.tags == 'error' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            {% endif %}
+        </div>
+        <div class="alert-content">
+            <span>{{ message }}</span>
+        </div>
+        <div class="alert-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+</form>
+</div>
+<script>// Add this JavaScript to make the close button work
+document.addEventListener('DOMContentLoaded', function() {
+document.querySelectorAll('.alert-close').forEach(function(closeBtn) {
+closeBtn.addEventListener('click', function() {
+    const alert = this.closest('.alert');
+    alert.style.opacity = '0';
+    alert.style.transform = 'translateX(100%)';
+    alert.style.transition = 'opacity 0.3s, transform 0.3s';
+    
+    setTimeout(function() {
+        alert.remove();
+    }, 300);
+});
+});
+
+// Auto-dismiss alerts after 5 seconds
+setTimeout(function() {
+document.querySelectorAll('.alert').forEach(function(alert, index) {
+    setTimeout(function() {
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(100%)';
+        alert.style.transition = 'opacity 0.3s, transform 0.3s';
+        
+        setTimeout(function() {
+            alert.remove();
+        }, 300);
+    }, index * 200); // Staggered dismissal
+});
+}, 5000);
+});</script>
+<div class="notification"></div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add subtle motion effect to grid
+        const gridContainer = document.querySelector('.movie-grid-container');
+        const grid = document.querySelector('.movie-grid');
+        
+        if (gridContainer && grid) {
+            gridContainer.addEventListener('mousemove', function(e) {
+                const { left, top, width, height } = this.getBoundingClientRect();
+                const x = (e.clientX - left) / width - 0.5;
+                const y = (e.clientY - top) / height - 0.5;
+                
+                grid.style.transform = `rotateY(${x * 2}deg) rotateX(${y * -2}deg)`;
+            });
+            
+            gridContainer.addEventListener('mouseleave', function() {
+                grid.style.transform = 'rotateY(0) rotateX(0)';
+            });
+        }
+        
+        // Add staggered animation for cards on page load
+        const movieCards = document.querySelectorAll('.movie-card');
+        movieCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + (index * 50)); // Staggered delay
+        });
+    });
+</script>
+{% endblock %}

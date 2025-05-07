@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+  <title>About Us - TMDB</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #01b4e4;
+      --secondary: #032541;
+      --text: #333;
+      --light: #f5f5f5;
+      --white: #ffffff;
+      --accent: #90cea1;
+      --gradient-start: #90cea1;
+      --gradient-end: #01b4e4;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background-color: var(--light);
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgb(55, 153, 141), rgba(24, 167, 207, 0.7));
+      
+      color: var(--white);
+      padding: 100px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      left: 0;
+      width: 100%;
+      height: 100px;
+      background: var(--light);
+      clip-path: polygon(0 0, 100% 100%, 100% 100%, 0% 100%);
+    }
+    
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .hero-logo {
+      max-width: 400px;
+      margin-bottom: 30px;
+    }
+    
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      opacity: 0.9;
+    }
+    
+    .hero-cta {
+      display: inline-block;
+      background-color: var(--white);
+      color: var(--primary);
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .hero-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px;
+    }
+    
+    .section {
+      margin-bottom: 80px;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      color: var(--secondary);
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 70px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      margin: 15px auto 0;
+      border-radius: 2px;
+    }
+    
+    .mission-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      margin-bottom: 60px;
+    }
+    
+    .mission-content {
+      flex: 1;
+    }
+    
+    .mission-image {
+      flex: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+    
+    .mission-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    
+    .feature-card {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    
+    .feature-title {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      color: var(--secondary);
+    }
+    
+    /* Team Section */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+    
+    .team-member {
+      background: var(--white);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s ease;
+    }
+    
+    .team-member:hover {
+      transform: translateY(-10px);
+    }
+    
+    .member-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    
+    .member-info {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .member-name {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: var(--secondary);
+    }
+    
+    .member-role {
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+    
+    .member-social {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .member-social a {
+      color: var(--text);
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+    }
+    
+    .member-social a:hover {
+      color: var(--primary);
+    }
+    
+    /* Future Goals */
+    .goals-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    
+    .goal-card {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .goal-card:hover {
+      transform: translateY(-10px);
+    }
+    
+    .goal-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    
+    .goal-title {
+      font-size: 1.3rem;
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, var(--secondary), #05396b);
+      color: var(--white);
+      padding: 80px 0;
+      text-align: center;
+    }
+    
+    .cta-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .cta-title {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    
+    .cta-text {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+    
+    .cta-button {
+      display: inline-block;
+      background: var(--white);
+      color: var(--primary);
+      padding: 15px 40px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Original Footer CSS */
+    footer {
+      background-color: #1c1c1c;
+      color: white;
+      padding: 40px 0;
+      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .footer-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .footer-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      flex-basis: 20%;
+      padding-right: 60px;
+    }
+
+    .footer-logo img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 15px;
+      margin-top: 35px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-basis: 75%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding-left: 45px;
+    }
+
+    .footer-section {
+      flex: 1;
+      margin: 0 10px;
+      min-width: 150px;
+      margin-top: 15px;
+    }
+
+    .footer-section h3 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-section ul li {
+      margin: 5px 0;
+    }
+
+    .footer-section ul li a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .footer-section ul li a:hover {
+      opacity: 1;
+      color: #00A8E1;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 15px;
+      opacity: 0.8;
+    }
+
+    .footer-bottom p{
+      padding-top: 15px;
+      padding-left: 25px;
+      font-size: 15px;
+    }
+
+    .social-footer {
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .social-text {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .social-text span {
+      color: #00A8E1;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .si {
+      font-size: 24px;
+      color: white;
+      text-decoration: none;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .si:hover {
+      transform: scale(1.2);
+      color: #00A8E1;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 15px;
+      padding-left: 30px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .mission-wrapper {
+        flex-direction: column;
+        gap: 30px;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-logo {
+        max-width: 300px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .feature-card, .team-member, .goal-card {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .footer-container {
+        flex-direction: column;
+      }
+
+      .footer-links {
+        padding-left: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_2-9665a76b1ae401a510ec1e0ca40ddcb3b0cfe45f1d51b77a308fea0845885648.svg" alt="TMDB Logo" class="hero-logo">
+      <h1>Discover the World of Cinema</h1>
+      <p>Your ultimate destination for exploring, tracking, and discovering movies and TV shows from around the globe.</p>
+      <a href="{% url 'home' %}" class="hero-cta">Start Exploring</a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Mission Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Our Mission</h2>
+      </div>
+      <div class="mission-wrapper">
+        <div class="mission-content">
+          <p>At TMDB, we believe that everyone deserves access to comprehensive, reliable information about the world of film and television. Our mission is to create the most inclusive, accurate, and user-friendly platform for cinephiles and casual viewers alike.</p>
+          <p>Founded in 2024 by a team of passionate film enthusiasts, TMDB has quickly evolved from a simple hobby project into a comprehensive database trusted by movie fans worldwide. We're dedicated to helping you discover new favorites, keep track of what you've watched, and connect with a community that shares your passion for storytelling.</p>
+        </div>
+        <div class="mission-image">
+          <img src="https://template.canva.com/EAGT6E9V3jA/1/0/1600w-VbdwjnyZFwM.jpg" alt="Movie theater interior">
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Why Choose TMDB?</h2>
+      </div>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-sync-alt"></i>
+          </div>
+          <h3 class="feature-title">Real-time Updates</h3>
+          <p>Stay current with the latest releases, trending content, and upcoming movies and shows.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3 class="feature-title">Powerful Search</h3>
+          <p>Find exactly what you're looking for with our advanced filtering by genre, year, rating, and more.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-user-friends"></i>
+          </div>
+          <h3 class="feature-title">Vibrant Community</h3>
+          <p>Connect with fellow movie enthusiasts, share recommendations, and discuss your favorite films.</p>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Meet Our Team</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-member">
+          <img src="https://i.pinimg.com/736x/a4/3b/14/a43b140c9d00ac6a92414e9e55cd6052.jpg" alt="Vidhi Mahajan" class="member-image">
+          <div class="member-info">
+            <h3 class="member-name">Vidhi Mahajan</h3>
+            <div class="member-social">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-member">
+          <img src="https://i.pinimg.com/originals/3b/16/b5/3b16b5a48c3157ba1977961f1ce8b227.jpg" alt="Nitika Anand" class="member-image">
+          <div class="member-info">
+            <h3 class="member-name">Nitika Anand</h3>
+            <div class="member-social">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-member">
+          <img src="https://image.shutterstock.com/shutterstock/photos/2069612699/display_1500/stock-vector-indian-punjabi-traditional-outfit-2069612699.jpg" alt="Simranjit Singh" class="member-image">
+          <div class="member-info">
+            <h3 class="member-name">Simranjit Singh</h3>
+            <div class="member-social">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-member">
+          <img src="https://c8.alamy.com/comp/PGY7MX/indian-man-standing-in-national-traditional-clothes-male-cartoon-character-full-length-flat-PGY7MX.jpg" alt="Rohitash Singh" class="member-image">
+          <div class="member-info">
+            <h3 class="member-name">Rohitash Singh</h3>
+            <div class="member-social">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Future Goals Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Our Vision for the Future</h2>
+      </div>
+      <div class="goals-container">
+        <div class="goal-card">
+          <div class="goal-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <h3 class="goal-title">User Reviews & Ratings</h3>
+          <p>Building a robust platform for community ratings and in-depth reviews to help users make informed viewing decisions.</p>
+        </div>
+        <div class="goal-card">
+          <div class="goal-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <h3 class="goal-title">Multilingual Support</h3>
+          <p>Expanding our platform to support multiple languages, making cinema accessible to audiences worldwide.</p>
+        </div>
+        <div class="goal-card">
+          <div class="goal-icon">
+            <i class="fas fa-tv"></i>
+          </div>
+          <h3 class="goal-title">Streaming Guide</h3>
+          <p>Implementing a comprehensive guide to help users find where their favorite content is available for streaming.</p>
+        </div>
+        <div class="goal-card">
+          <div class="goal-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3 class="goal-title">AI Recommendations</h3>
+          <p>Developing sophisticated algorithms to provide personalized movie and show suggestions based on viewing history.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CTA Section -->
+<section class="cta-section">
+  <div class="cta-container">
+    <h2 class="cta-title">Start Your Cinematic Journey Today</h2>
+    <p class="cta-text">Join over 10 million film enthusiasts who track, discover, and discuss their favorite movies and TV shows. Create your personalized watchlist, rate what you've seen, and connect with a community that shares your passion.</p>
+    <div class="cta-buttons">
+      <a href="{% url 'register'%}" class="cta-button primary">Create Free Account</a>
+      <a href="{% url 'home'%}" class="cta-button secondary">Explore Database</a>
+    </div>
+    <div class="cta-features">
+      <div class="cta-feature">
+        <i class="fas fa-film"></i>
+        <span>1,000,000+ Movies & Shows</span>
+      </div>
+      <div class="cta-feature">
+        <i class="fas fa-users"></i>
+        <span>Active Community</span>
+      </div>
+      <div class="cta-feature">
+        <i class="fas fa-mobile-alt"></i>
+        <span>Mobile Apps Available</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Improved CTA Section */
+  .cta-section {
+    background: linear-gradient(135deg, var(--secondary), rgb(255, 255, 255));
+    color: var(--white);
+    padding: 80px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/api/placeholder/1200/600');
+    background-size: cover;
+    opacity: 0.1;
+    z-index: 1;
+  }
+  
+  .cta-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .cta-title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  
+  .cta-text {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .cta-button {
+    display: inline-block;
+    padding: 15px 35px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button.primary {
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .cta-button.secondary {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    border: 2px solid var(--white);
+  }
+  
+  .cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .cta-features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+  }
+  
+  .cta-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .cta-feature i {
+    font-size: 2rem;
+    color: var(--accent);
+  }
+  
+  .cta-feature span {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .cta-buttons {
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .cta-button {
+      width: 100%;
+      max-width: 280px;
+    }
+    
+    .cta-features {
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .cta-title {
+      font-size: 2rem;
+    }
+    
+    .cta-text {
+      font-size: 1rem;
+      max-width: 100%;
+    }
+  }
+</style>
+
+  <!-- Original Footer -->
+  <footer>
+    <div class="footer-container">
+        <div class="footer-logo">
+            <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_2-d537fb228cf3ded904ef09b136fe3fec72548ebc1fea3fbbd1ad9e36364db38b.svg" 
+                 alt="TMDB Logo">
+        </div>
+
+        <div class="footer-links">
+            <div class="footer-section">
+                <h3>The Basics</h3>
+                <ul>
+                    <li><a href="#">About TMDB</a></li>
+                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                    <li><a href="#">Support Forums</a></li>
+                    <li><a href="#">API Documentation</a></li>
+                    <li><a href="#">System Status</a></li>
+                </ul>
+            </div>
+
+
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="#">Guidelines</a></li>
+                    <li><a href="#">Discussions</a></li>
+                    <li><a href="#">Leaderboard</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">API Terms of Use</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">DMCA Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="social-footer">
+            <p class="social-text">Follow <span>TMDB</span> on</p>
+            <div class="social-icons" style="margin-top: 15px;">
+                <a href="#" class="si"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="si"><i class="fab fa-x-twitter"></i></a>
+                <a href="#" class="si"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="si"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+
+
+        <div class="footer-bottom">
+            <p>©️ 2025 The Movie Database (TMDB).  All rights reserved.</p>
+        </div>
+    </div>
+  </footer>
+</body>
+</html>

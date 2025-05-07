@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% block title %}Movies - TMDB{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+   
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+</style>
+
+<body>
+    
+{% load static %}
+
+
+
+{% block content %}
+<!-- <div class="hero">
+    <h1>SHIKAARI</h1>
+    <p>The epic conclusion to the Thriller. Crime Coming soon to theaters.</p>
+    <div class="hero-buttons">
+        <button class="btn btn-primary" style="background-color: #db1919;">Watch Trailer</button>
+        <button class="btn btn-secondary">Add to My List</button>
+    </div>
+</div> -->
+<div class="hero">
+    <video autoplay muted loop playsinline id="myVideo" class="background-video">
+        {% load static %}
+        <source src="{% static 'images/trailer.mp4' %}" type="video/mp4">
+        <source src="{% static 'images/trailer.webm' %}" type="video/webm">
+        Your browser does not support HTML5 video.
+    </video>
+    <div class="hero-content">
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        <h1>KESARI CHAPTER 2</h1>
+        
+        <p>Rise with Courage, Fall only to Rise Stronger.</p>
+        <br>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" style="background-color: #0ea5e9;"><a href ="https://youtu.be/r-7g08INMSI?si=T0S2GBx453BQnMDq" style="text-decoration: none; color: white;" target="_blank">Watch Trailer</a></button>
+            <button class="btn btn-secondary">Add to My List</button>
+        </div>
+    </div>
+</div>
+<style>.messages-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 350px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease-out forwards;
+    position: relative;
+    border-left: 4px solid;
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.alert-icon {
+    margin-right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-content {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.alert-close {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    padding: 5px;
+}
+
+.alert-close:hover {
+    opacity: 1;
+}
+
+/* Success alert */
+.alert-success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border-left-color: #22c55e;
+}
+
+.alert-success .alert-icon {
+    color: #22c55e;
+}
+
+/* Info alert */
+.alert-info {
+    background-color: #f0f9ff;
+    color: #0c4a6e;
+    border-left-color: #0ea5e9;
+}
+
+.alert-info .alert-icon {
+    color: #0ea5e9;
+}
+
+/* Warning alert */
+.alert-warning {
+    background-color: #fffbeb;
+    color: #854d0e;
+    border-left-color: #f59e0b;
+}
+
+.alert-warning .alert-icon {
+    color: #f59e0b;
+}
+
+/* Error alert */
+.alert-error {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border-left-color: #ef4444;
+}
+
+.alert-error .alert-icon {
+    color: #ef4444;
+}</style>
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        <div class="alert-icon">
+            {% if message.tags == 'success' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            {% elif message.tags == 'info' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            {% elif message.tags == 'warning' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            {% elif message.tags == 'error' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            {% endif %}
+        </div>
+        <div class="alert-content">
+            <span>{{ message }}</span>
+        </div>
+        <div class="alert-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+</form>
+</div>
+<script>// Add this JavaScript to make the close button work
+document.addEventListener('DOMContentLoaded', function() {
+document.querySelectorAll('.alert-close').forEach(function(closeBtn) {
+closeBtn.addEventListener('click', function() {
+    const alert = this.closest('.alert');
+    alert.style.opacity = '0';
+    alert.style.transform = 'translateX(100%)';
+    alert.style.transition = 'opacity 0.3s, transform 0.3s';
+    
+    setTimeout(function() {
+        alert.remove();
+    }, 300);
+});
+});
+
+// Auto-dismiss alerts after 5 seconds
+setTimeout(function() {
+document.querySelectorAll('.alert').forEach(function(alert, index) {
+    setTimeout(function() {
+        alert.style.opacity = '0';
+        alert.style.transform = 'translateX(100%)';
+        alert.style.transition = 'opacity 0.3s, transform 0.3s';
+        
+        setTimeout(function() {
+            alert.remove();
+        }, 300);
+    }, index * 200); // Staggered dismissal
+});
+}, 5000);
+});</script>
+<div class="container">
+    <h2 class="row-title">Latest Movies</h2>
+    <div class="movie-row">
+        {% for movie in coming_this_month %}
+            <div class="movie-card" data-movie-id="{{ movie.id }}">
+                <img src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
+                <div class="movie-info">
+                    <h3 class="movie-title">{{ movie.title }}</h3>
+                    <p class="movie-release">{{ movie.release_date|date:"F d, Y" }}</p>
+                    <p class="movie-description">{{ movie.description }}</p>
+                    <div class="movie-buttons">
+                        <button class="movie-btn watchlist-btn {% if movie.id in watchlist_movies %}in-watchlist{% endif %}"
+                                data-movie-id="{{ movie.id }}">
+                            {% if movie.id in watchlist_movies %}-{% else %}+{% endif %}
+                        </button>
+                        <a href="https://pstream.org/media/tmdb-movie-1195430-deva" style="text-decoration: none;" target="_blank"><button class="movie-btn">▶</button></a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            
+        {% endfor %}
+    </div>
+
+    <h2 class="row-title">Web Series & TV Dramas</h2>
+    <div class="movie-row">
+        {% for movie in coming_next_month %}
+            <div class="movie-card" data-movie-id="{{ movie.id }}">
+                <img src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
+                <div class="movie-info">
+                    <h3 class="movie-title">{{ movie.title }}</h3>
+                    <p class="movie-release">{{ movie.release_date|date:"F d, Y" }}</p>
+                    <p class="movie-description">{{ movie.description }}</p>
+                    <div class="movie-buttons">
+                        <button class="movie-btn watchlist-btn {% if movie.id in watchlist_movies %}in-watchlist{% endif %}"
+                                data-movie-id="{{ movie.id }}">
+                            {% if movie.id in watchlist_movies %}-{% else %}+{% endif %}
+                        </button>
+                        <a href="https://pstream.org/media/tmdb-tv-1396-breaking-bad/3572/62085" target="_blank" style="text-decoration: none;"><button class="movie-btn">▶</button></a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="movie-card">
+                <img src="https://images.chaupal.tv/63fb94ed07e35a397da6ed9c2e5ff26c/63fb94ed07e35a397da6ed9c2e5ff26c_474x708" alt="Movie poster">
+                <div class="movie-info">
+                    <h3 class="movie-title">Avatar 3</h3>
+                    <p class="movie-release">May 5, 2025</p>
+                    <p class="movie-description">Return to Pandora as Jake Sully and Neytiri encounter new challenges and explore different regions of the alien world.</p>
+                    <div class="movie-buttons">
+                        <button class="movie-btn">+</button>
+                        <button class="movie-btn">▶</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2 class="row-title">Oscar Winners</h2>
+    <div class="movie-row">
+        {% for movie in oscar_contenders %}
+            <div class="movie-card" data-movie-id="{{ movie.id }}">
+                <img src="{{ movie.image_url }}" alt="{{ movie.title }} poster">
+                <div class="movie-info">
+                    <h3 class="movie-title">{{ movie.title }}</h3>
+                    <p class="movie-release">{{ movie.release_date|date:"F d, Y" }}</p>
+                    <p class="movie-description">{{ movie.description }}</p>
+                    <div class="movie-buttons">
+                        <button class="movie-btn watchlist-btn {% if movie.id in watchlist_movies %}in-watchlist{% endif %}"
+                                data-movie-id="{{ movie.id }}">
+                            {% if movie.id in watchlist_movies %}-{% else %}+{% endif %}
+                        </button>
+                        <a href="https://pstream.org/media/tmdb-movie-313369-la-la-land" target="_blank" style="text-decoration: none;"><button class="movie-btn">▶</button></a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="movie-card">
+                <img src="https://images.chaupal.tv/b3ccd1e002263fdb35acd84e799f0f4e/b3ccd1e002263fdb35acd84e799f0f4e_474x708" alt="Movie poster">
+                <div class="movie-info">
+                    <h3 class="movie-title">The Last Poet</h3>
+                    <p class="movie-release">June 1, 2025</p>
+                    <p class="movie-description">A powerful drama about a dying writer's final attempt to create his masterpiece while reconciling with his past.</p>
+                    <div class="movie-buttons">
+                        <button class="movie-btn">+</button>
+                        <button class="movie-btn">▶</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // CSRF token helper function
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Get all watchlist buttons
+    const watchlistButtons = document.querySelectorAll('.watchlist-btn');
+    
+    // Add click event to each button
+    watchlistButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const movieId = this.getAttribute('data-movie-id');
+            const isInWatchlist = this.classList.contains('in-watchlist');
+            
+            // Send AJAX request to toggle watchlist
+            fetch(`/watchlist/toggle/${movieId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Toggle button appearance
+                    this.classList.toggle('in-watchlist');
+                    this.textContent = isInWatchlist ? '+' : '-';
+                    // Show notification
+                    alert(data.message); // Replace with better notification
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update watchlist.');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+
+</body>
+</html>

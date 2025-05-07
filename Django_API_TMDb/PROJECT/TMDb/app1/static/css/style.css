@@ -1,0 +1,414 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #1c1c1c;
+    padding: 20px 70px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transition: top 0.3s;
+    z-index: 1000;
+    }
+    
+    .navbar-left {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    }
+    
+    .navbar-left img {
+    height: 40px;
+    width: 150px;
+    margin-right: 30px;
+    cursor: pointer;
+    }
+    
+    .navbar-left a {
+    color: white;
+    text-decoration: none;
+    margin-right: 30px;
+    font-size: 16px;
+    }
+    
+    .navbar-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    }
+    
+    .navbar-right a {
+    color: white;
+    text-decoration: none;
+    margin-right: 25px;
+    font-size: 16px;
+    }
+    
+    .watch{
+        margin-left: 10px;
+    }
+    
+    /* Search Box */
+    .search-box {
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    width: 400px; /* Adjusted default width */
+    height: 30px;
+    outline: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    color: #333;
+    margin-right: 20px;
+    }
+    
+    .search-box::placeholder {
+    color: #aaa;
+    font-style: italic;
+    }
+    
+    .search-box:focus {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    background-color: #fff;
+    }
+    
+    /* Dropdown Styles */
+    .dropdown {
+    position: relative;
+    display: inline-block;
+    }
+    
+    /* Dropdown Styles */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        width: 120px; /* Adjust dropdown width */
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+        border-radius: 4px;
+        top: 40px; /* Adjust top position for better alignment */
+        right: 0; /* Align the dropdown to the right side */
+    }
+    
+    
+    .dropdown-content a {
+    color: rgb(0, 0, 0);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    }
+    
+    .dropdown:hover .dropdown-content {
+    display: block;
+    }
+    
+    /* Hamburger Menu Styles */
+    .hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    }
+    
+    .hamburger div {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px;
+    transition: all 0.3s ease;
+    }
+    
+    /* Media Queries for Responsiveness */
+    
+    /* For screens smaller than 768px */
+    @media (max-width: 768px) {
+        #navbar {
+            padding: 15px 20px;
+            justify-content: space-between; /* This ensures proper spacing */
+        }
+    
+        .navbar-left, .navbar-right {
+            flex-direction: column;
+            align-items: flex-start; /* Align items to the left */
+        }
+    
+        .navbar-left a, 
+        .navbar-right a {
+            display: block;
+            margin-bottom: 15px; /* Space between links */
+        }
+    
+        .navbar-left img {
+            height: 30px;
+            width: 120px;
+        }
+    
+        .search-box {
+            width: 200px;
+            margin-bottom: 15px; /* Ensure search box spacing */
+        }
+    
+        .hamburger {
+           
+    display: flex; /* Show hamburger icon */
+    }
+    
+    .navbar-right {
+    display: none; /* Hide right-side content by default */
+    }
+    
+    #navbar.active .navbar-left a, 
+    #navbar.active .navbar-right {
+    display: flex;
+    flex-direction: column;
+    background-color: #032541;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    }
+    
+    #navbar.active .navbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+    }
+    
+    #navbar.active .navbar-right a {
+    margin-bottom: 15px;
+    }
+    }
+    
+    /* For screens smaller than 480px */
+    @media (max-width: 480px) {
+    .search-box {
+    width: 150px;
+    }
+    
+    .navbar-left img {
+    height: 30px;
+    width: 120px;
+    }
+    }
+
+body {
+    background: url('https://wallpaperaccess.com/full/2063931.jpg') no-repeat center center/cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 15, 15, 0.9);
+    z-index: 1;
+}
+
+.admin-container {
+    width: 90%;
+    padding-left: 180px;
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    text-align: center;
+    margin-top: 70px;
+    z-index: 2;
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #4682B4;
+    font-weight: 700;
+    text-shadow: 2px 2px 10px rgba(70, 130, 180, 0.5);
+}
+
+.movie-search,
+.movie-form,
+.movie-list {
+    background: rgba(25, 25, 25, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.7);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.movie-search:hover,
+.movie-form:hover,
+.movie-list:hover {
+    transform: scale(1.02);
+}
+
+.movie-search input,
+.movie-form input {
+    width: 100%;
+    padding: 16px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    background: rgba(70, 130, 180, 0.1); /* Dark blue input background */
+    color: #ffffff;
+    box-shadow: inset 0px 2px 6px rgba(0, 0, 0, 0.3);
+    transition: 0.3s;
+}
+
+.movie-search input:focus,
+.movie-form input:focus {
+    outline: none;
+    background: rgba(70, 130, 180, 0.2); /* Dark blue input focus */
+    box-shadow: 0px 0px 12px rgba(70, 130, 180, 0.4); /* Dark blue focus shadow */
+
+}
+
+.movie-search button,
+.movie-form button {
+    width: 100%;
+    background: #4682B4; /* Dark blue button */
+    color: #ffffff; /* White button text for contrast */
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.3s;
+    font-weight: bold;
+    margin-top: 10px; /* Space between input and button */
+
+}
+
+.movie-search button:hover,
+.movie-form button:hover {
+    background: #36648B; /* Slightly darker blue on hover */
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(70, 130, 180, 0.5); /* Dark blue hover shadow */
+}
+
+
+#searchResults {
+    background: rgba(25, 25, 25, 0.9);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    max-height: 200px; /* Set a maximum height */
+    overflow-y: auto; /* Add a scrollbar if needed */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.7); /* Same shadow as other elements */
+}
+
+
+.search-result-item {
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 5px; /* Rounded corners for the search items */
+}
+
+.search-result-item:hover {
+    background: rgba(70, 130, 180, 0.2); /* Highlight on hover */
+    color: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.6);
+    margin-top: 20px; /* Space between form and table */
+}
+
+th,
+td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transition: background 0.3s ease;
+    color: #e0e0e0;
+}
+
+th {
+    background: rgba(70, 130, 180, 0.2);
+    color: #4682B4;
+    font-size: 18px;
+}
+
+td {
+    background: rgba(40, 40, 40, 0.85);
+    font-size: 16px;
+}
+
+tr:hover td {
+    background: rgba(60, 60, 60, 0.8);
+    transition: 0.3s;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+.search-result-item {
+    cursor: pointer; /* Make search results clickable */
+    padding: 5px;
+    border-bottom: 1px solid #eee; /* Add separators */
+}
+.search-result-item:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+}
+#searchResults {
+    border: 1px solid #ccc;  /* Add a border to the search results box */
+    max-height: 200px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    background-color: white; /* Ensure a white background */
+    position: absolute; /* So it overlays content */
+    width: calc(100% - 2px); /* Match input width */
+    z-index: 10; /* Ensure it's on top */
+    display: none; /* Initially hidden */
+}

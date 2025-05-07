@@ -1,0 +1,65 @@
+body {
+    background-image: url('../images/download.jpg'); /* Replace with an actual image */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+  
+  .login-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .login-container h2 {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: rgb(250, 243, 243);
+  }
+
+  .form-group label {
+    color: rgb(244, 235, 235);
+    font-weight: bold;
+  }
+  .btn-custom {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to right, #032b7c, #064a89);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    margin-bottom: 10px;
+  }
+  .btn-register {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to right, #032b7c, #064a89);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+  }
+        .flash-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2a62b7; /* Green for success */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+.flash-message.error { background-color: #f44336; } /* Red for error */

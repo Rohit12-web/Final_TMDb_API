@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        /* Hidden State */
+.hidden {
+    display: none !important;
+}
+
+/* Chat Header */
+#chat-header {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* Chat Box */
+#chat-box {
+    height: 200px;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* User & Bot Messages */
+.user-message {
+    background: #007bff;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+    align-self: flex-end;
+}
+
+.bot-message {
+    background: #f1f1f1;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin: 5px 0;
+    align-self: flex-start;
+}
+
+/* Chat Input */
+#chat-input {
+    display: flex;
+    padding: 5px;
+    background: #f9f9f9;
+}
+
+#user-input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+}
+
+#chat-input button {
+    padding: 5px 10px;
+    margin-left: 5px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#chat-input button:hover {
+    background: #0056b3;
+}
+    </style>
+</head>
+<body>
+    <!-- Floating Chatbot Button -->
+<button id="chatbot-btn">💬 Chat</button>
+
+<!-- Chatbot Container (Initially Hidden) -->
+<div id="chat-container" class="hidden">
+    <div id="chat-header">
+        <span>AI Chatbot</span>
+        <button id="close-chat">✖</button>
+    </div>
+    <div id="chat-box"></div>
+    <div id="chat-input">
+        <input type="text" id="user-input" placeholder="Ask me something..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    const predefinedAnswers = {
+    "What is your name?": "I am Gemini AI, your chatbot assistant!",
+    "Who created you?": "I was created by Google and integrated by Team INNOVATORS.",
+    "What is Platform?": "Platform is a career-focused platform created by Team INNOVATORS.",
+    "How does the bookstore recommendation system work?": "It suggests books based on user preferences, browsing history, and popular trends."
+};
+
+async function sendMessage() {
+    let userInput = document.getElementById("user-input").value.trim();
+    if (userInput === "") return;
+
+    let chatBox = document.getElementById("chat-box");
+
+    let userMessage = document.createElement("div");
+    userMessage.classList.add("user-message");
+    userMessage.innerText = userInput;
+    chatBox.appendChild(userMessage);
+
+    document.getElementById("user-input").value = "";
+
+    let botMessage = document.createElement("div");
+    botMessage.classList.add("bot-message");
+    botMessage.innerText = "Thinking...";
+    chatBox.appendChild(botMessage);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Check if the input matches predefined answers
+    if (predefinedAnswers.hasOwnProperty(userInput)) {
+        botMessage.innerText = predefinedAnswers[userInput];
+        return;
+    }
+
+    try {
+        let response = await fetch("https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyAUz5hd3wiqOCUxqfhTzBdqOWKFANYINng", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                messages: [
+                    { role: "user", content: userInput }
+                ]
+            })
+        });
+
+        let data = await response.json();
+
+        if (data && data.candidates && data.candidates.length > 0 && data.candidates[0].content) {
+            botMessage.innerText = data.candidates[0].content;
+        } else {
+            botMessage.innerText = "Sorry, I couldn't generate a response.";
+        }
+    } catch (error) {
+        botMessage.innerText = "Error: Unable to connect to AI.";
+        console.error("API Error:", error);
+    }
+}
+
+</script>

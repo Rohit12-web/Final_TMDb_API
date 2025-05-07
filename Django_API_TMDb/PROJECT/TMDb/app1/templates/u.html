@@ -1,0 +1,126 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .flash-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50; /* Green for success */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+.flash-message.error { background-color: #f44336; } /* Red for error */
+
+    </style>
+</head>
+<body>
+    <button onclick="showFlashMessage('Movie added successfully!')">Show Message</button>
+</body>
+</html>
+<script>
+    function showFlashMessage(message, type = "success") {
+    const flashDiv = document.createElement("div");
+    flashDiv.className = `flash-message ${type}`;
+    flashDiv.textContent = message;
+    
+    document.body.appendChild(flashDiv);
+    
+    setTimeout(() => {
+        flashDiv.remove();
+    }, 3000); // Removes message after 3 seconds
+}
+
+</script> -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .starry-background {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, #1a1626, #2b2652, #1a1626);
+            overflow: hidden;
+        }
+
+        /* Layer 1 - Bright stars */
+        .starry-background::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            box-shadow: 
+                50px 200px #fff 2px,
+                150px 50px #fff 1px,
+                300px 400px #fff 2px,
+                450px 100px #fff 1px,
+                600px 300px #fff 2px,
+                750px 150px #fff 1px,
+                200px 600px #fff 2px,
+                350px 350px #fff 1px;
+            animation: twinkle 2s infinite alternate;
+            pointer-events: none;
+        }
+
+        /* Layer 2 - Fainter stars */
+        .starry-background::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            box-shadow: 
+                100px 300px rgba(255, 255, 255, 0.8) 1px,
+                200px 150px rgba(255, 255, 255, 0.6) 2px,
+                350px 250px rgba(255, 255, 255, 0.7) 1px,
+                500px 50px rgba(255, 255, 255, 0.8) 2px,
+                650px 450px rgba(255, 255, 255, 0.6) 1px,
+                800px 200px rgba(255, 255, 255, 0.7) 2px;
+            animation: twinkle 3s infinite alternate;
+            pointer-events: none;
+        }
+
+        /* Enhanced twinkling animation */
+        @keyframes twinkle {
+            0% { 
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Contact form styling */
+        .contact-form {
+            position: relative;
+            z-index: 1;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="starry-background">
+        <div class="contact-form">
+            <h1>Contact Us</h1>
+            <p>This is where your contact form would go!</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+body {
+    background-image: url('../images/download.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+  .register-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .register-container h2 {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: rgb(241, 241, 245);
+  }
+
+  .form-group label {
+    color: rgb(250, 246, 246);
+    font-weight: bold;
+  }
+
+  .btn-custom {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to right, #032b7c, #064a89);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    margin-bottom: 10px;
+  }
+  .btn-login {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to right, #032b7c, #064a89);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+  }

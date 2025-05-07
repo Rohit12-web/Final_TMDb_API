@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - TMDB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+    
+    <div id="navbar">
+        <div class="navbar-left">
+            <a href="{{url_for('home')}}"><img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_long_1-8ba2ac31f354005783fab473602c34c3f4fd207150182061e425d366e4f34596.svg" alt="TMDB Logo"></a>
+            <div class="dropdown">
+                <a href="#">Movies</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular</a>
+                    <a href="#">Upcoming</a>
+                    <a href="#">Top Rated</a>
+                    <a href="#">Now Playing</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">TV Shows</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular</a>
+                    <a href="#">Airing Today</a>
+                    <a href="#">Top Rated</a>
+                    <a href="#">On TV</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">People</a>
+                <div class="dropdown-content">
+                    <a href="#">Popular People</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#">More</a>
+                <div class="dropdown-content">
+                    <a href="#">Discussions</a>
+                    <a href="#">Leaderboard</a>
+                    <a href="#">Support</a>
+                    <a href="#">API</a>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Hamburger Icon -->
+        <div class="hamburger" onclick="toggleNavbar()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+       
+        
+        <div class="navbar-right">
+            <input type="text" id="searchInput" onkeyup="filterMovies()" class="search-box" placeholder="Search for a movie, tv show, person...">
+            <!-- <button id="darkModeToggle" style="padding-right: 13px; padding-bottom: 3px;">🌙</button> -->
+            
+            
+        </div>
+    
+        
+        
+    </div>
+    <div class="admin-container">
+        <h1>Admin Panel</h1>
+
+        <div class="movie-search">
+            <button onclick="showManualForm()">Add Movie Manually</button>
+            <div id="searchResults"></div>
+        </div>
+
+        <div class="movie-form" style="display:none;">
+            <h2>Add/Edit Movie Details</h2>
+            <input type="text" id="movieTitle" placeholder="Movie Title">
+            <input type="text" id="movieGenre" placeholder="Genre">
+            <input type="text" id="movieYear" placeholder="Release Year">
+            <button onclick="addMovie()" id="addMovie">Add Movie</button>
+            <button onclick="updateMovie()" id="updateMovie" style="display: none;">Update Movie</button>
+            <button onclick="hideManualForm()">Cancel</button>
+            <input type="hidden" id="movieId">
+        </div>
+
+        <div class="movie-list">
+            <h2>Movie List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Year</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="movieTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    
+    **************************
+    <script>
+    let movies = [
+    { id: 1, title: "Dune 2", genre: "Action", year: "2024" },
+    { id: 2, title: "The Fall Guy", genre: "Comedy", year: "2024" },
+    { id: 3, title: "Deadpool & Wolverine", genre: "Drama", year: "2024" },
+    { id: 4, title: "Alien: Romulus", genre: "Sci-fi", year: "2024" },
+];
+
+function displayMovies(filteredMovies = movies) {
+    const tableBody = document.getElementById("movieTable");
+    tableBody.innerHTML = "";
+
+    filteredMovies.forEach(movie => {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+            <td>${movie.title}</td>
+            <td>${movie.genre}</td>
+            <td>${movie.year}</td>
+            <td>
+                <button onclick="editMovie(${movie.id})">Edit</button>
+                <button onclick="deleteMovie(${movie.id})">Delete</button>
+            </td>
+        `;
+    });
+}
+
+function showManualForm() {
+    document.querySelector(".movie-search").style.display = "none";
+    document.querySelector(".movie-form").style.display = "block";
+    document.getElementById("movie-form").querySelector("h2").textContent = "Add Movie Details";
+    document.getElementById("updateMovie").style.display = "none";
+    document.getElementById("addMovie").style.display = "inline-block";
+
+    document.getElementById("movieTitle").value = "";
+    document.getElementById("movieGenre").value = "";
+    document.getElementById("movieYear").value = "";
+    document.getElementById("movieId").value = "";
+}
+
+function hideManualForm() {
+    document.querySelector(".movie-form").style.display = "none";
+    document.querySelector(".movie-search").style.display = "block";
+    document.getElementById("searchResults").style.display = "none";
+}
+
+function addMovie() {
+    const title = document.getElementById("movieTitle").value.trim();
+    const genre = document.getElementById("movieGenre").value.trim();
+    const year = document.getElementById("movieYear").value.trim();
+
+    if (title === "" || genre === "" || year === "") {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const newMovie = {
+        id: movies.length + 1,
+        title,
+        genre,
+        year
+    };
+
+    movies.push(newMovie);
+    displayMovies();
+    hideManualForm();
+}
+
+function editMovie(id) {
+    const movie = movies.find(m => m.id === id);
+    if (!movie) return;
+
+    showManualForm();
+
+    document.getElementById("movieTitle").value = movie.title;
+    document.getElementById("movieGenre").value = movie.genre;
+    document.getElementById("movieYear").value = movie.year;
+    document.getElementById("movieId").value = movie.id;
+    document.getElementById("movie-form").querySelector("h2").textContent = "Edit Movie Details";
+    document.getElementById("updateMovie").style.display = "inline-block";
+    document.getElementById("addMovie").style.display = "none";
+}
+
+function updateMovie() {
+    const id = parseInt(document.getElementById("movieId").value);
+    const title = document.getElementById("movieTitle").value.trim();
+    const genre = document.getElementById("movieGenre").value.trim();
+    const year = document.getElementById("movieYear").value.trim();
+
+    if (title === "" || genre === "" || year === "") {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    const index = movies.findIndex(movie => movie.id === id);
+    if (index !== -1) {
+        movies[index] = { id, title, genre, year };
+        displayMovies();
+        hideManualForm();
+    }
+}
+
+function deleteMovie(id) {
+    movies = movies.filter(movie => movie.id !== id);
+    displayMovies();
+}
+
+function searchMovie() {
+    const searchTerm = document.getElementById("movieSearch").value.trim().toLowerCase();
+    const searchResults = document.getElementById("searchResults");
+    searchResults.innerHTML = "";
+    searchResults.style.display = "block";
+
+    if (searchTerm === "") {
+        searchResults.innerHTML = "<div>Please enter a movie title.</div>";
+        return;
+    }
+
+    const filteredResults = movies.filter(movie =>
+        movie.title.toLowerCase().includes(searchTerm)
+    );
+
+    if (filteredResults.length === 0) {
+        searchResults.innerHTML = "<div>No results found.</div>";
+        return;
+    }
+
+    filteredResults.forEach(result => {
+        const resultItem = document.createElement("div");
+        resultItem.textContent = `${result.title} (${result.year})`;
+        resultItem.addEventListener("click", () => {
+            document.getElementById("movieTitle").value = result.title;
+            document.getElementById("movieGenre").value = result.genre;
+            document.getElementById("movieYear").value = result.year;
+            searchResults.style.display = "none";
+            document.querySelector(".movie-search").style.display = "none";
+            document.querySelector(".movie-form").style.display = "block";
+        });
+        searchResults.appendChild(resultItem);
+    });
+}
+
+document.getElementById("movieSearch").addEventListener("input", searchMovie);
+
+document.addEventListener('click', (event) => {
+    const searchResults = document.getElementById('searchResults');
+    if (!event.target.closest("#movieSearch") && !event.target.closest("#searchResults")) {
+        searchResults.style.display = 'none';
+    }
+});
+
+displayMovies();
+</script>
+
+</body>
+</html>
